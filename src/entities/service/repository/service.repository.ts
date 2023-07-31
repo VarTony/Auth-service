@@ -8,17 +8,26 @@ export class Service {
     @Column({ name: 'name', type: 'varchar' })
     name: string;
 
+    @Column({ name: 'passhash', type: 'varchar' })
+    passhash: string;
+
+    @Column({ name: 'salt', type: 'varchar' })
+    salt: string;
+
     @Column({ name: 'domain', type: 'varchar' })
     domain: string;
 
     @Column({ name: 'host', type: 'varchar' })
     host: string;
 
-    @Column({ name: 'port', type: 'int' })
-    port: number;
+    @Column({ name: 'port', type: 'int', nullable: true })
+    port?: number;
 
     @Column({ name: 'is_active', type: 'boolean' })
     isActive: boolean;
+
+    @Column({ name: 'deactivated_at', type: 'timestamp', nullable: true })
+    deactivatedAt?: Date;
 
     @CreateDateColumn()
     createdAt: Date;
