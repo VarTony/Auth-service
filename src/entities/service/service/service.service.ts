@@ -53,7 +53,7 @@ export class ServicesService {
     async deactivateService(name: string, domain: string) {
         let result;
         try {
-            await this.repository.update({ name, domain }, { isActive: false });
+            await this.repository.update({ name, domain }, { isActive: false, deactivatedAt: new Date() });
             result = `Сервис ${ name }, успешно деактивирован.`;
         } catch(err) {
             console.warn(err);

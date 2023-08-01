@@ -13,9 +13,6 @@ export class RefreshToken {
     @Column({ name: 'token', type: 'varchar' })
     token: string;
 
-    @Column({ name: 'sing', type: 'varchar' })
-    sing: string;
-
     @Column({ name: 'is_active', type: 'boolean' })
     isActive: boolean;
 
@@ -24,6 +21,9 @@ export class RefreshToken {
 
     @Column({ name: 'digit_imprint', type: 'varchar' })
     digitImprint: string;
+
+    @Column({ name: 'deactivated_at', type: 'timestamp', nullable: true })
+    deactivatedAt?: Date;
 
     @CreateDateColumn()
     createdAt: Date;

@@ -13,17 +13,26 @@ export class AuthUser {
     @Column({ name: 'basic_user_id', type: 'int' })
     basicUserId: number;
 
+    @Column({ name: 'email', type: 'varchar', nullable: true })
+    email?: string;
+
+    @Column({ name: 'phone', type: 'varchar', nullable: true })
+    phone?: string;
+
     @Column({ name: 'role_id', type: 'int', nullable: true })
     roleId?: number;
 
-    @Column({ name: 'active', type: 'boolean' })
-    active: boolean;
+    @Column({ name: 'is_active', type: 'boolean' })
+    isActive: boolean;
 
     @Column({ name: 'passhash', type: 'varchar' })
     passhash: string;
 
     @Column({ name: 'salt', type: 'varchar' })
     salt: string;
+
+    @Column({ name: 'deactivated_at', type: 'timestamp', nullable: true })
+    deactivatedAt?: Date;
 
     @CreateDateColumn()
     createdAt: Date;

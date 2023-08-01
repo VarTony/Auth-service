@@ -10,7 +10,7 @@ import {
   refreshTokenSecret,
   accessTokenExpiration,
   refreshTokenExpiration 
-} from '@entities/token/constants';
+} from '@token/constant';
 const path = require('path');
 
 

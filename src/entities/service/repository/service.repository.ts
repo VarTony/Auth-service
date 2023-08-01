@@ -20,9 +20,6 @@ export class Service {
     @Column({ name: 'host', type: 'varchar' })
     host: string;
 
-    @Column({ name: 'port', type: 'int', nullable: true })
-    port?: number;
-
     @Column({ name: 'is_active', type: 'boolean' })
     isActive: boolean;
 
