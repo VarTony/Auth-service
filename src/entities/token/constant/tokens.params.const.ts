@@ -1,5 +1,5 @@
 const expirationToMs = (expiration: string) => expiration
- .split('*').reduce((time, num) => +num * time, 1);
+ ?.split('*').reduce((time, num) => +num * time, 1);
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;

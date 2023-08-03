@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { accessTokenSecret, createJWT, fromBase64Url, refreshTokenSecret, serviceName, tokensParser } from '../constant';
+import { accessTokenSecret, createJWT, deactivateDispatcher, fromBase64Url, refreshTokenSecret, serviceName, tokensParser } from '../constant';
 import { RefreshToken } from '../repository';
 import { RTBlacklist } from '../repository';
 import { Repository } from 'typeorm';
+import { AuthUser } from '@auth/repository';
 
 
 @Injectable()
 export class TokenService {
     constructor(
         @InjectRepository(RefreshToken) private readonly rtRepository: Repository<RefreshToken>,
-        @InjectRepository(RTBlacklist) private readonly blacklistRepository: Repository<RTBlacklist>
+        @InjectRepository(RTBlacklist) private readonly blRepository: Repository<RTBlacklist>
     ) {}
 
 
@@ -45,7 +46,10 @@ export class TokenService {
      * @param userData 
      * @returns 
      */
-    async createRefreshToken(userData: any, devicesInfo: any): Promise<string>{
+    async createRefreshToken(
+         userData: AuthUser,
+         devicesInfo: {  location: string, digitImprint: string }
+        ): Promise<string>{
         let result;
         try {
         // Создает запись токена в базе.
@@ -64,10 +68,10 @@ export class TokenService {
             jti: id,
             iat: Date.now(),
             exp: (Date.now() + refreshTokenSecret),
-            roles: userData.roleId,
+            roles: userData.roleId ?? 'roleId',
             iss: serviceName,
-            uid: userData.basicUserId,
-            email: userData.email
+            uid: userData.nativeUserId, 
+            email: userData.email ?? 'email'
         };
         const refreshJWT = await createJWT(header, payload, accessTokenSecret);
         
@@ -81,6 +85,7 @@ export class TokenService {
         return result;
     }
 
+
     /**
      * Деактивирует refresh токен.
      * 
@@ -90,10 +95,10 @@ export class TokenService {
        let result;
         try {
             await this.rtRepository.update({ id }, { isActive: false, deactivatedAt: new Date() })
-            result = `Token ${ id } deactivated`;
+            result = 'Deactivated';
         } catch(err) {
             console.warn(err);
-            result = `Unable to deactivated token ${ id }`
+            result = 'Error';
         }
         return result;
     }
@@ -108,11 +113,11 @@ export class TokenService {
     async addRtToBlacklist(token: string) {
         let result;
         try {
-            const { payload, ...headerAndSignature } = await tokensParser(token);
+            const { payload, ..._headerAndSignature } = await tokensParser(token);
             const tokenId = JSON.parse(await fromBase64Url(payload))?.jti;
-            await this.deactivateRefreshJWT(tokenId);
-            await this.blacklistRepository.create({ tokenId });
-            
+            const deactivatedState = await this.deactivateRefreshJWT(tokenId);
+            await deactivateDispatcher[deactivatedState](tokenId, this.blRepository);
+
             result = 'Токен был деактивирован и добавлен в черный список.';
         } catch(err) {
             console.warn(err);

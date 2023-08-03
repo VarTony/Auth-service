@@ -2,15 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DbConnection } from '@connections/index';
 import { 
-  AuthModule
+  AuthModule,
+  DomainModule,
+  ServiceModule,
+  TokenModule
 } from '@entities/index';
-import { JwtModule } from '@nestjs/jwt';
-import { 
-  accessTokenSecret,
-  refreshTokenSecret,
-  accessTokenExpiration,
-  refreshTokenExpiration 
-} from '@token/constant';
 const path = require('path');
 
 
@@ -23,13 +19,11 @@ const path = require('path');
     ],
       isGlobal: true
     }),
-    JwtModule.register({
-      global: true,
-      secret: accessTokenSecret,
-      signOptions: { expiresIn: accessTokenExpiration }
-    }),
     DbConnection,
-    AuthModule
+    AuthModule,
+    ServiceModule,
+    TokenModule,
+    DomainModule
   ]
 })
 export class AppModule {}

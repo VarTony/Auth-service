@@ -1,12 +1,17 @@
-type logUserData = {
+type LogUserData = {
     login?: string, 
     email?: string
 };
 
-type passData = {
-    password: string,
-    passhash: string,
-    salt: string
-}
+type UserData = {
+    domain: string,
+    service: string,
+    id: number,
+    login: string,
+    roleId?: number,
+    email?: string,
+    phone?: string,
+};
 
-export { logUserData, passData };
+
+export { LogUserData, UserData };

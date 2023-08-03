@@ -1,4 +1,3 @@
-import { passChecker } from "./pass.checker.const";
-import { createPasshashAndSalt } from "./creater.passhash.const";
+import { serviceIsAlreadyExist, domainNotFound, noAccessToDeactivate } from "./answers.service.const";
 
-export { passChecker, createPasshashAndSalt };
+export { serviceIsAlreadyExist, domainNotFound, noAccessToDeactivate };

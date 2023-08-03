@@ -1,7 +1,7 @@
 type ServiceData = {
     name: string,
     password: string,
-    domain: string,
+    domainName: string,
     host: string,
     port?: number
 }

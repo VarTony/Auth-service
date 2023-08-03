@@ -1,3 +1,3 @@
-import { logUserData, passData } from "./service.type";
+import { LogUserData, UserData } from "./service.type";
 
-export { logUserData, passData };
+export { LogUserData, UserData };
