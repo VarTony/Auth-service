@@ -4,7 +4,7 @@ import { accessTokenSecret, createJWT, deactivateDispatcher, fromBase64Url, refr
 import { RefreshToken } from '../repository';
 import { RTBlacklist } from '../repository';
 import { Repository } from 'typeorm';
-import { AuthUser } from '@auth/repository';
+import { User } from '@user/repository';
 
 
 @Injectable()
@@ -47,7 +47,7 @@ export class TokenService {
      * @returns 
      */
     async createRefreshToken(
-         userData: AuthUser,
+         userData: User,
          devicesInfo: {  location: string, digitImprint: string }
         ): Promise<string>{
         let result;

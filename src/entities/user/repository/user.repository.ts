@@ -1,17 +1,17 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Service } from "../../service/repository/service.repository";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Domain } from "@domain/index";
 
-@Entity('auth-user')
-export class AuthUser {
+@Entity('user')
+export class User {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToMany(_ => Service, service => service.id)
-    @Column({ name: 'service_id', type: 'int' })
-    serviceId: number;
-
-    @Column({ name: 'basic_user_id', type: 'int' })
+    @Column({ name: 'native_user_id', type: 'int' })
     nativeUserId: number;
+
+    // @ManyToOne(_ => Domain, domain => domain.id)
+    @Column({ name: 'domain_id', type: 'int' })
+    domainId: number;
 
     @Column({ name: 'login', type: 'varchar' })
     login: string;
@@ -27,9 +27,6 @@ export class AuthUser {
 
     @Column({ name: 'is_active', type: 'boolean' })
     isActive: boolean;
-
-    @Column({ name: 'password', type: 'varchar', nullable: true })
-    password?: string;
 
     @Column({ name: 'passhash', type: 'varchar', nullable: true })
     passhash?: string;

@@ -1,6 +1,6 @@
-import { Body, Controller, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from '..';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AuthUserDTO } from '@auth/dto';
 
 @Controller('auth')
@@ -17,11 +17,15 @@ export class AuthController {
     @Post('singIn')
     async singInUser(
         @Body() body: AuthUserDTO,
+        @Req() req: Request,
         @Res() res: Response
     ): Promise<void> {
-        const { login, email, password } = body;
+        const { domain, id, password } = body;
+
+        const location = req.headers.host;
+        const digitImprint = req.headers['user-agent'];
         
-        const result = await this.service.singIn({ login, email }, password);
-        res.send({ result });
+        const { status, result } = await this.service.singIn(domain, id, password);
+        res.status(status).send({ result });
     }
 }

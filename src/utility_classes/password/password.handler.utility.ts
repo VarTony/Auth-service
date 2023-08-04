@@ -4,8 +4,6 @@ import * as crypto from 'node:crypto';
 
 
 export class PasswordHandler {
-
-
     /**
     * Метод для проверки паролей.
     * 

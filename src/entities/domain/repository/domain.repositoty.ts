@@ -1,7 +1,9 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "@user/repository";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 @Entity('domain')
 export class Domain {
+    @OneToMany(_ => User, user => user.domainId)
     @PrimaryGeneratedColumn('increment')
     id: number;
 
@@ -20,7 +22,7 @@ export class Domain {
     @Column({ name: 'is_active', type: 'boolean' })
     isActive: boolean;
 
-    @Column({ name: 'deactivated_at', type: 'timestamp' })
+    @Column({ name: 'deactivated_at', type: 'timestamp', nullable: true })
     deactivatedAt?: Date;
 
     @CreateDateColumn()

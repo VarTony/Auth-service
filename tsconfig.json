@@ -22,6 +22,7 @@
       "@auth/*":         ["src/entities/auth/*"],
       "@token/*":      ["src/entities/token/*"],
       "@domain/*":      ["src/entities/domain/*"],
+      "@user/*":        ["src/entities/user/*"],
       "@connections/*" : ["src/connections/*" ],
       "@utility_classes/*": ["src/utility_classes/*"],
       "@entities/*":     ["src/entities/*"]

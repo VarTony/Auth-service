@@ -1,18 +1,17 @@
-import { IsEmail, IsNotEmpty, IsString, Length, ValidateIf } from "class-validator";
+import { IsInt, IsNotEmpty, IsString, Length, Min } from "class-validator";
 
 class AuthUserDTO {
     @IsString()
-    @Length(1, 50)
-    login?: string;
+    @Length(1, 256)
+    domain: string;
 
-    @ValidateIf((user: AuthUserDTO) => Boolean(user.login))
-    @IsString()
-    @IsEmail()
-    email?: string;
+    @IsInt()
+    @Min(1)
+    id: number;
 
     @IsNotEmpty()
     @IsString()
-    @Length(7, 25)
+    @Length(7, 256)
     password: string;
 }
 

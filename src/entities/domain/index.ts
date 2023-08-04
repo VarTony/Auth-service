@@ -1,5 +1,5 @@
 import { DomainService } from "./service";
-import { Domain } from "./repository";
 import { DomainModule } from "./module/domain.module";
+import { Domain } from "./repository";
 
-export { DomainService, Domain, DomainModule }
+export { DomainModule, DomainService, Domain }

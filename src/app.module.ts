@@ -4,14 +4,18 @@ import { DbConnection } from '@connections/index';
 import { 
   AuthModule,
   DomainModule,
-  ServiceModule,
-  TokenModule
+  // ServiceModule,
+  TokenModule,
+  UserModule
 } from '@entities/index';
+// import { TypeOrmModule } from '@nestjs/typeorm';
+// import { Domain } from '@domain/repository';
 const path = require('path');
 
 
 @Module({
   imports: [
+    // TypeOrmModule.forFeature([ Domain ]),
     ConfigModule.forRoot({
       envFilePath: [ 
         path.join(__dirname, '../config/.env'), 
@@ -21,9 +25,10 @@ const path = require('path');
     }),
     DbConnection,
     AuthModule,
-    ServiceModule,
+    // ServiceModule,
     TokenModule,
-    DomainModule
+    DomainModule,
+    UserModule,
   ]
 })
 export class AppModule {}

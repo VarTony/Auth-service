@@ -1,4 +1,4 @@
-import { AuthUser } from "@auth/repository/auth.user.repository";
+import { User } from "@user/repository";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('refresh-token')
@@ -6,7 +6,7 @@ export class RefreshToken {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(_ => AuthUser, authUser => authUser.id)
+    @ManyToOne(_ => User, user => user.id)
     @Column({ name: 'user_id', type: 'int' })
     userId: number;
 

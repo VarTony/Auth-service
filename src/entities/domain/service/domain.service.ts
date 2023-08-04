@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ServiceData } from '@service/types';
 import { Domain } from '../repository';
 import { PasswordHandler } from 'src/utility_classes';
+import { ResDomainResults } from '@domain/constant';
 
 @Injectable()
 export class DomainService {
@@ -11,13 +11,18 @@ export class DomainService {
         @InjectRepository(Domain) private readonly repository: Repository<Domain>
     ) {}
 
-
+    /**
+     * Регистрирует новый домен для дальнейшей работы.
+     * 
+     * @param domainsData 
+     * @returns 
+     */
     async addNewDomain(domainsData): Promise<string> {
         let result;
         const { password, host, name, } = domainsData;
         try {
         const isDomainExist = await this.findDomainByName(name);
-        if(isDomainExist) return 'Домен с таким именем уже существует';
+        if(isDomainExist) return ResDomainResults.bad.domainAlreadyExists;
 
         const { passhash, salt } = await PasswordHandler.createPasshashAndSalt(password);
         const domain = await this.repository.create({ 
@@ -28,29 +33,28 @@ export class DomainService {
             isActive: true
         })
         await this.repository.save(domain);
-        result = 'Домен был успешно зарегистрирован.'
+        result = ResDomainResults.good.domainSuccessAdded;
         } catch(err) {
             console.warn(err);
-            result = 'Произошла ошибка при регистрации домена, попробуйте позже или обратитесь к администратору';
+            result = ResDomainResults.bad.errorDuringRegistration;
         }
         return result;
     }
 
     /** 
-     * Деактивирует сервис по его имени и домену.
+     * Деактивирует домен по его имени.
      * 
      * @param name 
-     * @param domain 
      * @returns 
      */
     async deactivateDomain(name: string) {
         let result;
         try {
             await this.repository.update({ name }, { isActive: false, deactivatedAt: new Date() });
-            result = `Домен ${ name }, успешно деактивирован.`;
+            result = ResDomainResults.good.domainSuccessDeactivated(name);
         } catch(err) {
             console.warn(err);
-            result = `Не удалось деактивировать домен ${ name }`;
+            result = ResDomainResults.bad.errorDuringDeactivation(name);
         }
         return result;
     }
