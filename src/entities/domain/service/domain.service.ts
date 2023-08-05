@@ -60,15 +60,14 @@ export class DomainService {
     }
 
 
+    findDomainById = async (id: number) => await this.repository.findOne({ where: { id }}) 
+
+
     /**
      * Находит запись о домене по имени.
      * 
      * @param name 
      * @returns 
      */
-    async findDomainByName(name: string): Promise<Domain> {
-        const domain = await this.repository.findOne({ where: { name }});
-
-        return domain;
-    }
+    findDomainByName = async (name: string) => await this.repository.findOne({ where: { name }});
 }

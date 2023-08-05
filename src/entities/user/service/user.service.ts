@@ -22,7 +22,7 @@ export class UserService {
         let result: string;
         let status: number;
         try {
-            const { domainName, id, ...userData } = data;
+            const { domainName, login, id, ...userData } = data;
             const domain = await this.domain.findDomainByName(domainName)
             if(!domain) {
                 result = 'Не удалось зарегистрировать пользователя, нет такого домена';
@@ -30,7 +30,7 @@ export class UserService {
                 return { result, status };
             }
             const nativeUserId = id;
-            const existUser = this.getUserByDomainData(nativeUserId, domain.id)
+            const existUser = this.getUserByDomainData(login, domain.id)
 
             if(existUser) {
                 result = `Пользователь с таким id: ${ nativeUserId } уже существует`;
@@ -39,7 +39,8 @@ export class UserService {
             }
 
             const userPreparedData = await this.repository.create({
-                domainId: domain.id, 
+                login,
+                domainId: domain.id,
                 nativeUserId,
                 ...userData 
             });
@@ -73,24 +74,25 @@ export class UserService {
      * 
      * return { result, status }
      */
-    async getUserByDomainData(nativeUserId: number, domainId: number )
-        : Promise<{ result: User | { error: Error }, status: number }> {
-        let result: User | { error: Error };
-        let status: number;
-        try {
-            const user = await this.repository.findOne({ where: { nativeUserId, domainId } });
-            
-            result = user;
-            status = user ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        } catch(err) {
-            console.warn(err);
-            result = { error: new Error('Внутреняя ошибка при поиске пользователя для аутентификации') };
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        return { result, status  };
-    }
+    getUserByDomainData = async(login: string, domainId: number ) => await this.repository.findOne({ where: { login, domainId } });
 
 
+    /**
+     *  Находит пользователя по id.
+     * 
+     * 
+     * @param id 
+     * @returns 
+     */
+    findUserById = async (id: number) => await this.repository.findOne({ where: {id} });
+
+
+    /**
+     * Используется в тестировании.
+     * 
+     * 
+     * @returns 
+     */
     async findAllUsers() {
         // await this.repository.delete([1, 2])
         return await this.repository.find();

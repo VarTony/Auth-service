@@ -1,7 +1,9 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, Unique, PrimaryGeneratedColumn } from "typeorm";
 import { Domain } from "@domain/index";
 
+
 @Entity('user')
+@Unique([ 'login', 'domainId' ])
 export class User {
     @PrimaryGeneratedColumn('increment')
     id: number;

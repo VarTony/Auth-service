@@ -19,11 +19,8 @@ export class RefreshToken {
     @Column({ name: 'location', type: 'varchar' })
     location: string;
 
-    @Column({ name: 'digit_imprint', type: 'varchar' })
-    digitImprint: string;
-
-    @Column({ name: 'deactivated_at', type: 'timestamp', nullable: true })
-    deactivatedAt?: Date;
+    @Column({ name: 'user_agent', type: 'varchar' })
+    userAgent: string;
 
     @CreateDateColumn()
     createdAt: Date;

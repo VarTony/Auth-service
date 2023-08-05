@@ -3,6 +3,7 @@ type LogUserData = {
     email?: string
 };
 
+
 type UserData = {
     domain: string,
     service: string,
@@ -14,4 +15,9 @@ type UserData = {
 };
 
 
-export { LogUserData, UserData };
+type DigitImprint = {
+    location: string,
+    userAgent: string
+};
+
+export { LogUserData, UserData, DigitImprint };

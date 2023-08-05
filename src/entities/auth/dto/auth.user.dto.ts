@@ -1,13 +1,15 @@
-import { IsInt, IsNotEmpty, IsString, Length, Min } from "class-validator";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 
 class AuthUserDTO {
+    @IsNotEmpty()
     @IsString()
     @Length(1, 256)
     domain: string;
 
-    @IsInt()
-    @Min(1)
-    id: number;
+    @IsNotEmpty()
+    @IsString()
+    @Length(1, 256)
+    login: string;
 
     @IsNotEmpty()
     @IsString()

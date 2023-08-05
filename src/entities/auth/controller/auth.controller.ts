@@ -20,12 +20,11 @@ export class AuthController {
         @Req() req: Request,
         @Res() res: Response
     ): Promise<void> {
-        const { domain, id, password } = body;
-
+        const { domain, login, password } = body;
         const location = req.headers.host;
-        const digitImprint = req.headers['user-agent'];
+        const userAgent = req.headers['user-agent'];
         
-        const { status, result } = await this.service.singIn(domain, id, password);
+        const { status, result } = await this.service.singIn(domain, login, password, { location, userAgent });
         res.status(status).send({ result });
     }
 }

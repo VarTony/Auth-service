@@ -4,7 +4,16 @@ type JWTHeader = {
 }
 
 type JwtPayload = {
-    roles?: string
+    uid: number,
+    jti: number,
+    iat: Date,
+    exp: Date,
+    iss: string,
 }
 
-export { JWTHeader }
+type JwtPair = { 
+    refreshToken: string, 
+    accessToken: string
+}
+
+export { JWTHeader, JwtPair, JwtPayload }

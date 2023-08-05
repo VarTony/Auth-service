@@ -1,7 +1,7 @@
 import * as crypto from 'node:crypto';
 
 
-const jwtSignatureCreator = (
+const jwtSignatureCreator = async (
      b64Header: string,
      b64payload: string,
      secret: string,
