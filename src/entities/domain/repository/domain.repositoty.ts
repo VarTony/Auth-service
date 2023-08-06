@@ -7,7 +7,7 @@ export class Domain {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @Column({ name: 'name', type: 'varchar'})
+    @Column({ name: 'name', type: 'varchar', unique: true })
     name: string;
 
     @Column({ name: 'passhash', type: 'varchar' })
@@ -15,6 +15,9 @@ export class Domain {
 
     @Column({ name: 'salt', type: 'varchar' })
     salt: string;
+
+    @Column({ name: 'secret', type: 'varchar' })
+    secret: string;
 
     @Column({ name: 'host', type: 'varchar' })
     host: string;

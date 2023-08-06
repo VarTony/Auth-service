@@ -4,12 +4,13 @@ import { DbConnection } from '@connections/index';
 import { 
   AuthModule,
   DomainModule,
-  // ServiceModule,
+  SecretModule,
   TokenModule,
   UserModule
 } from '@entities/index';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 // import { Domain } from '@domain/repository';
+
 const path = require('path');
 
 
@@ -25,10 +26,10 @@ const path = require('path');
     }),
     DbConnection,
     AuthModule,
-    // ServiceModule,
     TokenModule,
     DomainModule,
     UserModule,
+    SecretModule,
   ]
 })
 export class AppModule {}

@@ -17,9 +17,10 @@ export class DomainService {
      * @param domainsData 
      * @returns 
      */
-    async addNewDomain(domainsData): Promise<string> {
-        let result;
-        const { password, host, name, } = domainsData;
+    async addNewDomain(domainsData): Promise<{ result: string, status: number }> {
+        let answer: { result: string, status: number };
+        
+        const { password, host, name, secret } = domainsData;
         try {
         const isDomainExist = await this.findDomainByName(name);
         if(isDomainExist) return ResDomainResults.bad.domainAlreadyExists;
@@ -29,16 +30,17 @@ export class DomainService {
             name,
             passhash,
             salt,
+            secret,
             host,
             isActive: true
         })
         await this.repository.save(domain);
-        result = ResDomainResults.good.domainSuccessAdded;
+        answer = ResDomainResults.good.domainSuccessAdded;
         } catch(err) {
             console.warn(err);
-            result = ResDomainResults.bad.errorDuringRegistration;
+            answer = ResDomainResults.bad.errorDuringRegistration;
         }
-        return result;
+        return answer;
     }
 
     /** 
@@ -47,24 +49,32 @@ export class DomainService {
      * @param name 
      * @returns 
      */
-    async deactivateDomain(name: string) {
-        let result;
+    async deactivateDomain(name: string): Promise<{ result: string, status: number }> {
+        let answer: { result: string, status: number };
         try {
             await this.repository.update({ name }, { isActive: false, deactivatedAt: new Date() });
-            result = ResDomainResults.good.domainSuccessDeactivated(name);
+            answer = ResDomainResults.good.domainSuccessDeactivated(name);
         } catch(err) {
             console.warn(err);
-            result = ResDomainResults.bad.errorDuringDeactivation(name);
+            answer = ResDomainResults.bad.errorDuringDeactivation(name);
         }
-        return result;
+        return answer;
     }
 
 
+    /**
+     * Находит запись о домене по id.
+     * 
+     * 
+     * @param id 
+     * @returns 
+     */
     findDomainById = async (id: number) => await this.repository.findOne({ where: { id }}) 
 
 
     /**
      * Находит запись о домене по имени.
+     * 
      * 
      * @param name 
      * @returns 

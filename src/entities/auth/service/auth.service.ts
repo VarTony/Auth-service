@@ -1,8 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { TokenService } from '@token/service';
 import { PasswordHandler } from '@utility_classes/index';
-import { User, UserService } from '@user/index';
-import { Domain } from '@domain/repository';
+import { UserService } from '@user/index';
 import { DomainService } from '@domain/service';
 import { JwtPair } from '@token/types/jwt.type';
 import { tokensParser } from '@token/constant';
@@ -46,7 +45,7 @@ export class AuthService {
             const isCorrectPass = await PasswordHandler.passChecker({ password, salt, passhash });
             
             if(!isCorrectPass) {
-                result = 'Неверный пароль.';
+                result = 'Неверный логин или пароль.';
                 status = HttpStatus.BAD_REQUEST;
                 return { result, status };
             }

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { accessTokenExpiration, accessTokenSecret, createJWT, deactivateDispatcher, fromBase64Url, jwtSignatureCreator, refreshTokenExpiration, refreshTokenSecret, serviceName, tokensParser } from '../constant';
+import { accessTokenExpiration, accessTokenSecret, createJWT, fromBase64Url, jwtSignatureCreator, refreshTokenExpiration, refreshTokenSecret, serviceName, tokensParser } from '../constant';
 import { RefreshToken } from '../repository';
 import { Repository } from 'typeorm';
 import { User } from '@user/repository';
