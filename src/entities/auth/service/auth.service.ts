@@ -50,7 +50,13 @@ export class AuthService {
                 return { result, status };
             }
             const { id, roleId, nativeUserId  } = user ;
-            result = await this.token.createJWTPair({ userId: id, domainName, nativeUserId, roleId }, digitImprint);
+            result = await this.token.createJWTPair({ 
+                userId: id, 
+                domainName,
+                domainSecret: domain.secret,
+                nativeUserId,
+                roleId 
+            }, digitImprint);
             status = HttpStatus.OK;
         } catch(err) {
             console.warn(err);
@@ -85,6 +91,7 @@ export class AuthService {
             result = await this.token.createJWTPair({ 
                 userId: uid,
                 domainName: domain.name,
+                domainSecret: domain.secret,
                 roleId,
                 nativeUserId
             }, digitImprint);

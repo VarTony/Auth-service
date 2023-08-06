@@ -69,7 +69,8 @@ export class DomainService {
      * @param id 
      * @returns 
      */
-    findDomainById = async (id: number) => await this.repository.findOne({ where: { id }}) 
+    findDomainById = async (id: number) => 
+        await this.repository.findOne({ where: { id }, cache: true }) 
 
 
     /**
@@ -79,5 +80,6 @@ export class DomainService {
      * @param name 
      * @returns 
      */
-    findDomainByName = async (name: string) => await this.repository.findOne({ where: { name }});
+    findDomainByName = async (name: string) => 
+        await this.repository.findOne({ where: { name }, cache: true });
 }

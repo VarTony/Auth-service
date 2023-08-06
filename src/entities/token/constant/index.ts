@@ -4,7 +4,7 @@ import { fromBase64, fromBase64Url } from "./base64.decoder.const";
 import { tokensParser } from "./tokens.parser.const";
 import { createJWT } from "./create.jwt.const";
 import { 
-    accessTokenSecret,
+    primaryATSecret,
     refreshTokenSecret,
     accessTokenExpiration,
     refreshTokenExpiration,
@@ -19,7 +19,7 @@ export {
     createJWT,
     tokensParser,
     jwtSignatureCreator,
-    accessTokenSecret,
+    primaryATSecret,
     refreshTokenSecret,
     accessTokenExpiration,
     refreshTokenExpiration,

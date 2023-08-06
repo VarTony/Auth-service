@@ -1,24 +1,35 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { accessTokenExpiration, accessTokenSecret, createJWT, fromBase64Url, jwtSignatureCreator, refreshTokenExpiration, refreshTokenSecret, serviceName, tokensParser } from '../constant';
+import { 
+    accessTokenExpiration,
+    primaryATSecret,
+    createJWT,
+    jwtSignatureCreator,
+    refreshTokenExpiration,
+    refreshTokenSecret,
+    serviceName,
+    tokensParser
+} from '../constant';
 import { RefreshToken } from '../repository';
 import { Repository } from 'typeorm';
-import { User } from '@user/repository';
 import { JwtPair } from '@token/types/jwt.type';
 import { ResultOfTokenVerification } from '@token/types';
 import { DigitImprint } from '@auth/types/service.type';
+import { SecretService } from '@secret/service/secret.service';
 
 type CreatingTokensData = { 
     userId: number,
     nativeUserId: number,
     domainName: string,
+    domainSecret: string,
     roleId?: number 
 }
 
 @Injectable()
 export class TokenService {
     constructor(
-        @InjectRepository(RefreshToken) private readonly repository: Repository<RefreshToken>
+        @InjectRepository(RefreshToken) private readonly repository: Repository<RefreshToken>,
+        private readonly secret: SecretService
     ) {}
 
     /**
@@ -37,9 +48,12 @@ export class TokenService {
             dmn: domainName,
             iss: serviceName,
             jti,
-            exp: (Date.now() + accessTokenExpiration)
+            exp: (Date.now() + (+accessTokenExpiration))
         };
-        return await createJWT(header, payload, accessTokenSecret);
+        const currentTemporarySecret = await this.secret.getCurentTemporarySecret();
+        const secret = `${ data.domainSecret }.${ currentTemporarySecret }.${ primaryATSecret }`;
+        
+        return await createJWT(header, payload, secret);
     }
 
 
@@ -71,7 +85,7 @@ export class TokenService {
         const payload = {
             jti: id,
             iat: Date.now(),
-            exp: (Date.now() + refreshTokenExpiration),
+            exp: (Date.now() + (+refreshTokenExpiration)),
             iss: serviceName,
             uid: nativeUserId, 
         };
