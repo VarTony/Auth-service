@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   accessTokenExpiration,
@@ -27,6 +27,8 @@ type CreatingTokensData = {
 
 @Injectable()
 export class TokenService {
+  private readonly logger = new Logger(TokenService.name);
+
   constructor(
     @InjectRepository(RefreshToken)
     private readonly repository: Repository<RefreshToken>,
@@ -137,8 +139,8 @@ export class TokenService {
       result = 'Токен был успешно деактивирован';
       status = HttpStatus.OK;
     } catch (err) {
-      console.warn(err);
       result = 'Не удалось провести деактивацию из-за внутреней ошибки.';
+      this.logger.error(err, { result });
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return { result, status };

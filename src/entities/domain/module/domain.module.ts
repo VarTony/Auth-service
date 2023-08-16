@@ -5,6 +5,6 @@ import { Domain } from '../repository/domain.repositoty';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Domain])],
-  providers: [DomainService],
+  providers: [DomainService]
 })
 export class DomainModule {}

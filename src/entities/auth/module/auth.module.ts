@@ -1,23 +1,21 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from '..';
-import { TokenService } from '@token/service';
-import { RefreshToken } from '@token/repository';
+import { TokenService, RefreshToken } from '@token/index';
 import { DomainService } from '@domain/service';
 import { Domain } from '@domain/repository';
 import { User } from '@user/repository';
 import { UserService } from '@user/index';
-import { SecretService } from '@secret/service/secret.service';
-import { Secret } from '@secret/repository';
+import { Secret, SecretService } from '@secret/index';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RefreshToken, Domain, User, Secret])],
+  imports: [TypeOrmModule.forFeature([RefreshToken, Secret, Domain, User])],
   providers: [
     AuthService,
+    SecretService,
     TokenService,
     UserService,
-    DomainService,
-    SecretService,
+    DomainService
   ],
 })
 export class AuthModule {}

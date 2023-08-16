@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenService } from '../service';
 import { RefreshToken } from '../repository';
-import { Secret } from '@secret/repository';
-import { SecretService } from '@secret/service/secret.service';
+import { SecretService, Secret } from '@secret/index';
 
 @Module({
   imports: [TypeOrmModule.forFeature([RefreshToken, Secret])],
-  providers: [TokenService, SecretService],
+  providers: [TokenService, SecretService]
 })
 export class TokenModule {}

@@ -5,9 +5,10 @@ import { Secret } from '../repository';
 
 @Injectable()
 export class SecretService {
+  private readonly logger = new Logger(SecretService.name);
+
   constructor(
     @InjectRepository(Secret) private readonly repository: Repository<Secret>,
-    private readonly logger = new Logger(SecretService.name)
   ) {}
 
   /**
@@ -42,9 +43,9 @@ export class SecretService {
       result = process.env.ACCESS_TOKEN_SECRET;
       status = HttpStatus.OK;
     } catch (err) {
-      this.logger.error(err);
       result =
         'Что-то пошло не так! Повторите попытку позже или обратитесь к администратору';
+        this.logger.error(err, { result });
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return { result, status };
@@ -80,9 +81,9 @@ export class SecretService {
       result = secrets;
       status = HttpStatus.OK;
     } catch (err) {
-      this.logger.error(err);
       result =
         'Что-то пошло не так! Повторите попытку позже или обратитесь к администратору';
+      this.logger.error(err, { result });
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return { result, status };

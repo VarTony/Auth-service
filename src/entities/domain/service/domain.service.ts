@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Domain } from '../repository';
@@ -7,6 +7,8 @@ import { ResDomainResults } from '@domain/constant';
 
 @Injectable()
 export class DomainService {
+  private readonly logger = new Logger(DomainService.name);
+
   constructor(
     @InjectRepository(Domain) private readonly repository: Repository<Domain>,
   ) {}
@@ -39,7 +41,7 @@ export class DomainService {
       await this.repository.save(domain);
       answer = ResDomainResults.good.domainSuccessAdded;
     } catch (err) {
-      console.warn(err);
+      this.logger.error(err);
       answer = ResDomainResults.bad.errorDuringRegistration;
     }
     return answer;
@@ -62,7 +64,7 @@ export class DomainService {
       );
       answer = ResDomainResults.good.domainSuccessDeactivated(name);
     } catch (err) {
-      console.warn(err);
+      this.logger.error(err);
       answer = ResDomainResults.bad.errorDuringDeactivation(name);
     }
     return answer;

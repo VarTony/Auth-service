@@ -1,6 +1,6 @@
 import { AuthModule } from '@auth/index';
 import { ServiceModule } from '@service/index';
-import { TokenModule } from '@token/module/token.module';
+import { TokenModule } from '@token/index';
 import { DomainModule } from '@domain/index';
 import { SecretModule } from '@secret/index';
 import { UserModule } from '@user/index';

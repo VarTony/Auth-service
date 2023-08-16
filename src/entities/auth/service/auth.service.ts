@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { TokenService } from '@token/service';
 import { PasswordHandler } from '@utility_classes/index';
 import { UserService } from '@user/index';
@@ -14,6 +14,8 @@ import { DigitImprint } from '@auth/types/service.type';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+  
   constructor(
     private readonly user: UserService,
     private readonly token: TokenService,
@@ -21,7 +23,7 @@ export class AuthService {
   ) {}
 
   /**
-   * Обрабатывает локгику входа.
+   * Обрабатывает локгику входа пользователя.
    *
    *
    * @param usersInfo
@@ -69,8 +71,8 @@ export class AuthService {
       );
       status = HttpStatus.OK;
     } catch (err) {
-      console.warn(err);
       result = 'Аутентификация: Полностью провалилась - полностью!';
+      this.logger.error(err, { result });
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return { result, status };
@@ -118,8 +120,8 @@ export class AuthService {
 
       status = HttpStatus.OK;
     } catch (err) {
-      console.warn(err);
       result = 'Токены ушли гулять';
+      this.logger.error(err, { result });
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
     return { result, status };

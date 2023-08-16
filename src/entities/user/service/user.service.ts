@@ -7,6 +7,8 @@ import { DomainService } from '@domain/service';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
     @InjectRepository(User) private readonly repository: Repository<User>,
     private readonly domain: DomainService,
@@ -53,10 +55,9 @@ export class UserService {
       result = `Пользователь ${user} успешно создан.`;
       status = HttpStatus.OK;
     } catch (err) {
-      Logger.error(err);
       const { passhash, salt, ...user } = data;
-
       result = `Не удалось зарегистрировать пользователя: ${user}`;
+      this.logger.error(err, { result });
       status = HttpStatus.NOT_ACCEPTABLE;
     }
     return { result, status };

@@ -9,6 +9,6 @@ import { UserController } from '@user/controller/user.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([Domain, User])],
   controllers: [UserController],
-  providers: [UserService, DomainService],
+  providers: [UserService, DomainService]
 })
 export class UserModule {}
