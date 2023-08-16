@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/VarTony" target="blank"><img src="./logo.png" width="200" alt="Nest Logo" /></a>
+  <a href="https://github.com/VarTony" target="blank"><img src="./lоgo.png" width="200" alt="Nest Logo" /></a>
 </p>
 
 <h1 color="#191970"> AUTH-SERVICE </h1>
