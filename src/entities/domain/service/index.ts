@@ -1,4 +1,3 @@
-import { DomainService } from "./domain.service";
+import { DomainService } from './domain.service';
 
 export { DomainService };
-

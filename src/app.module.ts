@@ -1,35 +1,37 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DbConnection } from '@connections/index';
-import { 
+import { AMQPConnection, DbConnection } from '@connections/index';
+import {
   AuthModule,
   DomainModule,
   SecretModule,
   TokenModule,
-  UserModule
+  UserModule,
 } from '@entities/index';
+import { MyLoggerModule } from './utility_classes';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 // import { Domain } from '@domain/repository';
 
 const path = require('path');
 
-
 @Module({
   imports: [
     // TypeOrmModule.forFeature([ Domain ]),
     ConfigModule.forRoot({
-      envFilePath: [ 
-        path.join(__dirname, '../config/.env'), 
-        path.join(__dirname, '../config/develop.env') 
-    ],
-      isGlobal: true
+      envFilePath: [
+        path.join(__dirname, '../config/.env'),
+        path.join(__dirname, '../config/develop.env'),
+      ],
+      isGlobal: true,
     }),
     DbConnection,
+    AMQPConnection,
+    MyLoggerModule,
     AuthModule,
     TokenModule,
     DomainModule,
     UserModule,
     SecretModule,
-  ]
+  ],
 })
 export class AppModule {}

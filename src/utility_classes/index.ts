@@ -1,3 +1,4 @@
-import { PasswordHandler } from "./password/password.handler.utility";
+import { PasswordHandler } from './password/password.handler.utility';
+import { MyLoggerService, MyLoggerModule } from './logger';
 
-export { PasswordHandler };
+export { PasswordHandler, MyLoggerService, MyLoggerModule };

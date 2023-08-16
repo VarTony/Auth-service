@@ -5,11 +5,11 @@ import { DomainModule } from '@domain/index';
 import { SecretModule } from '@secret/index';
 import { UserModule } from '@user/index';
 
-export { 
-    AuthModule,
-    ServiceModule,
-    TokenModule,
-    UserModule,
-    DomainModule,
-    SecretModule
+export {
+  AuthModule,
+  ServiceModule,
+  TokenModule,
+  UserModule,
+  DomainModule,
+  SecretModule,
 };

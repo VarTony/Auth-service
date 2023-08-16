@@ -1,3 +1,3 @@
-import { AuthUserDTO } from "./auth.user.dto";
+import { AuthUserDTO } from './auth.user.dto';
 
 export { AuthUserDTO };

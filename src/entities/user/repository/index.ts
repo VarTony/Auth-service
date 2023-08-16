@@ -1,3 +1,3 @@
-import { User } from "./user.repository";
+import { User } from './user.repository';
 
 export { User };

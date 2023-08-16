@@ -1,3 +1,3 @@
-import { SecretModule } from "./module/secret.module";
+import { SecretModule } from './module/secret.module';
 
 export { SecretModule };

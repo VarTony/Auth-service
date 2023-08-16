@@ -1,3 +1,3 @@
-import { RefreshToken } from "./refresh.token.repository";
+import { RefreshToken } from './refresh.token.repository';
 
 export { RefreshToken };

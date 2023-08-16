@@ -7,8 +7,8 @@ import { ServiceController } from '../controller';
 import { DomainService } from '@entities/domain/service/domain.service';
 
 @Module({
-    imports: [ TypeOrmModule.forFeature([ Service, Domain ]) ],
-    controllers: [ ServiceController ],
-    providers: [ ServicesService, DomainService ]
+  imports: [TypeOrmModule.forFeature([Service, Domain])],
+  controllers: [ServiceController],
+  providers: [ServicesService, DomainService],
 })
 export class ServiceModule {}

@@ -1,3 +1,3 @@
-import { AuthModule} from "./auth.module";
+import { AuthModule } from './auth.module';
 
 export { AuthModule };

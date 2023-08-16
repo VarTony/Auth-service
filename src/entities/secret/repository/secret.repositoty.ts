@@ -1,16 +1,22 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('secret')
 export class Secret {
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
-    @Column({ name: 'secret', type: 'varchar' })
-    secret: string;
+  @Column({ name: 'secret', type: 'varchar' })
+  secret: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @Column({ name: 'deactivated_at', type: 'timestamp' })
-    expireAt: Date;
+  @Column({ name: 'deactivated_at', type: 'timestamp' })
+  expireAt: Date;
 }

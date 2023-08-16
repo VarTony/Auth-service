@@ -1,7 +1,6 @@
 type PassPack = {
-    salt: string, 
-    passhash: string
+  salt: string;
+  passhash: string;
 };
-
 
 export { PassPack };

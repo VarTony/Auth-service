@@ -1,3 +1,3 @@
-import { Secret } from "./secret.repositoty";
+import { Secret } from './secret.repositoty';
 
 export { Secret };

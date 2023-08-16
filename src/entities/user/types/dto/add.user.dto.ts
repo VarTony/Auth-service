@@ -1,33 +1,41 @@
-import { Transform } from "class-transformer";
-import { IsEmail, IsInt, IsNotEmpty, IsPhoneNumber, IsString, Length, Min, ValidateIf, isInt } from "class-validator";
+import {
+  IsEmail,
+  IsInt,
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsString,
+  Length,
+  Min,
+  ValidateIf,
+} from 'class-validator';
 
 class AuthUserDTO {
-    @IsString()
-    domain: string;
-    
-    @IsString()
-    login: string;
+  @IsString()
+  domain: string;
 
-    @IsInt()
-    @Min(1)
-    id: number;
+  @IsString()
+  login: string;
 
-    @IsInt()
-    roleId?: number;
+  @IsInt()
+  @Min(1)
+  id: number;
 
-    @ValidateIf((user: AuthUserDTO) => Boolean(user.email))
-    @IsPhoneNumber()
-    phone?: string;
+  @IsInt()
+  roleId?: number;
 
-    @ValidateIf((user: AuthUserDTO) => Boolean(user.phone))
-    @IsString()
-    @IsEmail()
-    email?: string;
+  @ValidateIf((user: AuthUserDTO) => Boolean(user.email))
+  @IsPhoneNumber()
+  phone?: string;
 
-    @IsNotEmpty()
-    @IsString()
-    @Length(7, 256)
-    password: string;
+  @ValidateIf((user: AuthUserDTO) => Boolean(user.phone))
+  @IsString()
+  @IsEmail()
+  email?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Length(7, 256)
+  password: string;
 }
 
 export { AuthUserDTO };

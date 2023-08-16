@@ -1,3 +1,3 @@
-import { UserModule } from "./user.module";
+import { UserModule } from './user.module';
 
 export { UserModule };
