@@ -2,10 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from '..';
 import { TokenService, RefreshToken } from '@token/index';
-import { DomainService } from '@domain/service';
-import { Domain } from '@domain/repository';
-import { User } from '@user/repository';
-import { UserService } from '@user/index';
+import { DomainService, Domain } from '@domain/index';
+import { User, UserService } from '@user/index';
 import { Secret, SecretService } from '@secret/index';
 
 @Module({
