@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fclipart-library.com%2Fclipart%2Fblue-cat-cliparts-9.htm&psig=AOvVaw3c5RypWxn8MCaXjkEMpFDX&ust=1692247883104000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCLiwn-Gw4IADFQAAAAAdAAAAABA5" width="200" alt="Nest Logo" /></a>
+  <a href="https://github.com/VarTony" target="blank"><img src="./logo.png" width="200" alt="Nest Logo" /></a>
 </p>
 
 <h1 color="#191970"> AUTH-SERVICE </h1>
