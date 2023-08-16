@@ -1,15 +1,8 @@
-<style>
-h1 {
-  text-align: center;
-  color: #191970;
-}
-</style>
-
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-<h1> AUTH-SERVICE </h1>
+<h1 color="#191970"> AUTH-SERVICE </h1>
 
 Общее описание:
 
@@ -62,7 +55,7 @@ $ npm run start:prod
 
 ## Stay in touch
 
-- Author - [Anton  Ternovskiy]
+- Author - Anton  Ternovskiy
 
 ## License
 
