@@ -9,21 +9,22 @@ import {
   UserModule,
 } from '@entities/index';
 import { MyLoggerModule } from './utility_classes';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { Domain } from '@domain/repository';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AMQPConfig } from './configs/amqp.config';
 
 const path = require('path');
 
 @Module({
   imports: [
-    // TypeOrmModule.forFeature([ Domain ]),
     ConfigModule.forRoot({
+      load: [ AMQPConfig ],
       envFilePath: [
         path.join(__dirname, '../config/.env'),
-        path.join(__dirname, '../config/develop.env'),
+        path.join(__dirname, '../config/example.env'),
       ],
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     DbConnection,
     AMQPConnection,
     MyLoggerModule,

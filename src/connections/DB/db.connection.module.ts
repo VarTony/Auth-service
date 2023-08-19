@@ -17,3 +17,4 @@ const path = require('path');
   ],
 })
 export class DbConnection {}
+setTimeout(() => console.warn(process.env.POSTGRES_HOST), 5000);

@@ -1,4 +1,4 @@
-<h1 color="#191970"> AUTH-SERVICE </h1>
+<h1 style="color:#191970"> AUTH-SERVICE </h1>
 
 Общее описание:<br/>
 Сервис авторизации общается через AMQ протокол со сторонними сервисами, которым нужна услуга внешней авторизации. 
@@ -34,7 +34,7 @@
 ## Installation
 
 ```bash
-$ npm install
+$ npm ci
 ```
 
 ## Running the app

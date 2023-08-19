@@ -1,4 +1,4 @@
-import { DbConnection } from './db.connection.module';
-import { AMQPConnection } from './amqp.connection.module';
+import { DbConnection } from './DB/db.connection.module';
+import { AMQPConnection } from './AMQP/amqp.connection.module';
 
 export { DbConnection, AMQPConnection };

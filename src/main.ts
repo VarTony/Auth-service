@@ -14,7 +14,7 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
-  app.useLogger(app.get(MyLoggerService))
+  app.useLogger(app.get(MyLoggerService));
   await app.listen(process.env.SERVER_PORT || 3000);
 }
 bootstrap();
