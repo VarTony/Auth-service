@@ -3,7 +3,7 @@ type JWTHeader = {
   typ: string;
 };
 
-type JwtPayload = {
+type JWTPayload = {
   uid: number;
   jti: number;
   iat: Date;
@@ -11,9 +11,9 @@ type JwtPayload = {
   iss: string;
 };
 
-type JwtPair = {
+type JWTPair = {
   refreshToken: string;
   accessToken: string;
 };
 
-export { JWTHeader, JwtPair, JwtPayload };
+export { JWTHeader, JWTPair, JWTPayload };

@@ -3,8 +3,8 @@ import { TokenService } from '@token/service';
 import { PasswordHandler } from '@utility_classes/index';
 import { UserService } from '@user/index';
 import { DomainService } from '@domain/service';
-import { JwtPair } from '@token/types/jwt.type';
-import { tokensParser } from '@token/constant';
+import { JWTPair } from '@token/types/jwt.type';
+// import { tokensParser } from '@token/constant';
 import {
   isValidationOk,
   validationRTBadResult,
@@ -34,8 +34,8 @@ export class AuthService {
     login: string,
     password: string,
     digitImprint: { location: string; userAgent: string },
-  ): Promise<{ result: JwtPair | string; status: number }> {
-    let result: JwtPair | string;
+  ): Promise<{ result: JWTPair | string; status: number }> {
+    let result: JWTPair | string;
     let status: number;
     try {
       const domain = await this.domain.findDomainByName(domainName);
@@ -89,8 +89,8 @@ export class AuthService {
   async updateJWTPair(
     rt: string,
     digitImprint: DigitImprint,
-  ): Promise<{ result: JwtPair | string; status: number }> {
-    let result: JwtPair | string;
+  ): Promise<{ result: JWTPair | string; status: number }> {
+    let result: JWTPair | string;
     let status: number;
     try {
       const resultOfVerification = await this.token.verificateRT(
@@ -101,7 +101,7 @@ export class AuthService {
         return validationRTBadResult[resultOfVerification];
 
       validationRTOkResult[resultOfVerification]();
-      const { uid } = (await tokensParser(rt)).map.payload;
+      const { uid } = (await this.token.jwtParser(rt)).map.payload;
       const { roleId, domainId, nativeUserId } = await this.user.findUserById(
         uid,
       );

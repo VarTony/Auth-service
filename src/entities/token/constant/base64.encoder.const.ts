@@ -4,7 +4,7 @@
  * @param b64string
  * @returns
  */
-const replaceSpecialSymbols = (b64string) =>
+const replaceSpecialSymbols = (b64string: string) =>
   b64string
     .split('')
     .map((symbol) => ({ '=': '', '+': '-', '/': '_' }[symbol] ?? symbol));

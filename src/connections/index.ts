@@ -1,9 +1,9 @@
-import { DbConnection } from './DBMS/dbms.connection.module';
-import { AMQPConnection } from './AMQP/amqp.connection.module';
+import { PostgreConnection } from './DBMS/postgre.connection.module';
+import { RabbitConnection } from './AMQP/rabbit.connection.module';
 import { RedisConnection } from './CV/redis.connection';
 
 export { 
-    DbConnection,
-    AMQPConnection,
+    PostgreConnection,
+    RabbitConnection,
     RedisConnection
 };

@@ -17,14 +17,16 @@ export class SecretController {
     @Timeout(5000)
     @Interval(TEMP_ACCESS_SECRET_LIVETIME_IN_MS)
     @RabbitRPC({
-        routingKey: 'broadcast.temp.secret',
-        exchange: process.env.AMQP_EXCHANGE_NAME,
-        queue: process.env.AMQP_QUEUE_SECRET,
+        routingKey: 'tempsecret.create',
+        exchange: process.env.AMQP_EXCHANGE_SECRET_NAME,
+        queue: 'tempsecret-create',
         createQueueIfNotExists: true,
         queueOptions: {
             durable: true,
-            channel: 'secret.broadcast',
-            maxLength: 2
+            // channel: 'secret.broadcast',
+            messageTtl: TEMP_ACCESS_SECRET_LIVETIME_IN_MS + +process.env.ACCESS_TOKEN_EXPIRATION,
+            maxLength: 2,
+            // deadLetterExchange: 
         }
       })
     async temporarySecretBroadcastRpc() {

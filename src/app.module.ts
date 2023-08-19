@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { MyLoggerModule } from './utility_classes';
+import { ScheduleModule } from '@nestjs/schedule';
 import { 
-  AMQPConnection,
-  DbConnection,
+  RabbitConnection,
+  PostgreConnection,
   RedisConnection
 } from '@connections/index';
 import {
@@ -12,9 +14,12 @@ import {
   TokenModule,
   UserModule,
 } from '@entities/index';
-import { MyLoggerModule } from './utility_classes';
-import { ScheduleModule } from '@nestjs/schedule';
-import { AMQP_CONFIG, REDIS_CONFIG } from '@config/index';
+import { 
+  AMQP_CONFIG,
+  REDIS_CONFIG,
+  TOKEN_CONFIG,
+  POSTGRE_CONFIG
+} from '@config/index';
 
 const path = require('path');
 
@@ -23,7 +28,9 @@ const path = require('path');
     ConfigModule.forRoot({
       load: [ 
         AMQP_CONFIG,
-        REDIS_CONFIG
+        REDIS_CONFIG,
+        POSTGRE_CONFIG,
+        TOKEN_CONFIG
       ],
       envFilePath: [
         path.join(__dirname, '../config/.env'),
@@ -32,8 +39,8 @@ const path = require('path');
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    DbConnection,
-    AMQPConnection,
+    PostgreConnection,
+    RabbitConnection,
     RedisConnection,
     MyLoggerModule,
     AuthModule,

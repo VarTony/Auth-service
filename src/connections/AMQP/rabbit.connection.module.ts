@@ -16,10 +16,13 @@ import { Secret } from '@secret/repository';
         const login = config.get('amqLogin');
         const pass = config.get('amqPass');
         const host = `${ config.get('amqHost') }:${ config.get('amqPort') }`;
-        const mainExchange = config.get('amqMainExchange');
-        console.log(mainExchange);
+        const domainExchange = config.get('amqDomainExchange');
+        const secretExchange = config.get('amqSecretExchange');
 
-        const exchanges = [ { name: mainExchange, type: 'topic' } ];
+        const exchanges = [ 
+          { name: domainExchange, type: 'topic' },
+          { name: secretExchange, type: 'topic' }
+        ];
         const uri = `amqp://${ login }:${ pass }@${ host }`;
         const connectionInitOptions = { wait: false };
         return { exchanges, uri, connectionInitOptions };
@@ -30,4 +33,4 @@ import { Secret } from '@secret/repository';
   controllers: [ SecretController ],
   providers: [ SecretService ]
 })
-export class AMQPConnection {}
+export class RabbitConnection {}

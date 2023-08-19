@@ -1,4 +1,10 @@
-import { ResultOfTokenVerification } from './service.type';
-import { JwtPair, JWTHeader, JwtPayload } from './jwt.type';
+import { ResultOfTokenVerification, DataFromJWTParser } from './service.type';
+import { JWTPair, JWTHeader, JWTPayload } from './jwt.type';
 
-export { ResultOfTokenVerification, JwtPair, JWTHeader, JwtPayload };
+export { 
+    ResultOfTokenVerification,
+    JWTPair,
+    JWTHeader,
+    JWTPayload,
+    DataFromJWTParser
+};
