@@ -25,6 +25,7 @@
       "@secret/*":      ["src/entities/secret/*"],
       "@user/*":        ["src/entities/user/*"],
       "@connections/*" : ["src/connections/*" ],
+      "@config/*" : ["src/configs/*" ],
       "@utility_classes/*": ["src/utility_classes/*"],
       "@entities/*":     ["src/entities/*"]
 

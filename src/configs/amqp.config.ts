@@ -1,4 +1,4 @@
-const AMQPConfig = () => ({
+const AMQP_CONFIG = () => ({
     amqLogin: process.env.AMQP_LOGIN,
     amqPass: process.env.AMQP_PASSWORD,
     amqHost: process.env.AMQP_HOST,
@@ -7,4 +7,4 @@ const AMQPConfig = () => ({
   });
 
 
-export { AMQPConfig };
+export { AMQP_CONFIG };

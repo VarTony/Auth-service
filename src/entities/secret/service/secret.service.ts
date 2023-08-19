@@ -2,6 +2,8 @@ import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Secret } from '../repository';
+import { Interval, Timeout } from '@nestjs/schedule';
+import { TEMP_ACCESS_SECRET_LIVETIME_IN_MS } from '@secret/constant/secret.const';
 
 @Injectable()
 export class SecretService {
@@ -15,6 +17,8 @@ export class SecretService {
    * Генерирует временую часть
    *
    */
+  // @Timeout(3000)
+  // @Interval(TEMP_ACCESS_SECRET_LIVETIME_IN_MS - 5000)
   async createTemporaryAccessSecret() {
     try {
       const secretKey = await this.generateSecret();

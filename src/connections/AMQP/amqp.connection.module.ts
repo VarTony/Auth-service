@@ -17,7 +17,8 @@ import { Secret } from '@secret/repository';
         const pass = config.get('amqPass');
         const host = `${ config.get('amqHost') }:${ config.get('amqPort') }`;
         const mainExchange = config.get('amqMainExchange');
-        
+        console.log(mainExchange);
+
         const exchanges = [ { name: mainExchange, type: 'topic' } ];
         const uri = `amqp://${ login }:${ pass }@${ host }`;
         const connectionInitOptions = { wait: false };
