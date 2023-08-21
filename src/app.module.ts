@@ -20,11 +20,13 @@ import {
   TOKEN_CONFIG,
   POSTGRE_CONFIG
 } from '@config/index';
+import { CacheModule } from '@nestjs/cache-manager';
 
 const path = require('path');
 
 @Module({
   imports: [
+    CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot({
       load: [ 
         AMQP_CONFIG,

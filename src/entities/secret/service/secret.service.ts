@@ -1,17 +1,40 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Secret } from '../repository';
 import { Interval, Timeout } from '@nestjs/schedule';
 import { TEMP_ACCESS_SECRET_LIVETIME_IN_MS } from '@secret/constant/secret.const';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
-export class SecretService {
+export class SecretService implements OnModuleInit {
   private readonly logger = new Logger(SecretService.name);
 
   constructor(
     @InjectRepository(Secret) private readonly repository: Repository<Secret>,
+    @Inject(CACHE_MANAGER) private readonly cacheStorage: Cache
   ) {}
+
+
+
+  /**
+   * Метод для запуска генерации временного ключа при запуске приложения.
+   */
+  async onModuleInit() {
+    try {
+      const tempSecret = await this.repository.findOne
+        ({ 
+          where: { expireAt: MoreThan(Date.now()) },
+          order: { id: 'DESC' } 
+        });
+      if(!tempSecret) await this.createTemporaryAccessSecret(); 
+    } catch(err) {
+      this.logger.error(err, 'Произошла ошибка при инициации временного ключа!');
+    }
+  }
+
+
 
   /**
    * Генерирует временую часть
@@ -21,12 +44,15 @@ export class SecretService {
   // @Interval(TEMP_ACCESS_SECRET_LIVETIME_IN_MS - 5000)
   async createTemporaryAccessSecret() {
     try {
-      const secretKey = await this.generateSecret();
+      const secretKey = await this._generateSecret();
       const secret = await this.repository.create({
         secret: secretKey,
         expireAt: Date.now() + +process.env.SECRET_LIFETIME,
       });
-      const { id } = await this.repository.save(secret);
+      await this.repository.save(secret);
+      await this.cacheStorage.set('temp-secret:last', secret.secret, TEMP_ACCESS_SECRET_LIVETIME_IN_MS);
+      
+
     } catch (err) {
       this.logger.error(err);
     }
@@ -56,14 +82,28 @@ export class SecretService {
   }
 
   /**
-   * Отдает последний временый секретный ключ.
+   * Отдает крайний временый секретный ключ.
    * (Требует оптимизации)
    *
    *
    * @returns
    */
-  getCurrentTemporarySecret = async () =>
-    await this.repository.findOne({ order: { id: 'DESC' } });
+  getCurrentTemporarySecret = async () => {
+    let result: string;
+    try {
+    let tempSecret = await this.cacheStorage.get('temp-secret:last');
+    
+    if(!tempSecret) {
+      tempSecret = await this.repository.findOne({ order: { id: 'DESC' } });
+      this.logger.warn('Проблема с кпд системы, последний временный ключ отсутствует в кэш хранилище.')
+    }
+  } catch (err) {
+    result = 'Произошла ошибка при поиске последнего временного ключа.';
+    this.logger.error(err, result);
+  }
+
+    return { result };
+  }
 
   /**
    * Отдает два последних временных секретных ключа.
@@ -94,12 +134,12 @@ export class SecretService {
   }
 
   /**
-   * Функция для генерации секретного ключа.
+   * Внутрений метод для генерации секретного ключа.
    *
    * @param length
    * @returns
    */
-  generateSecret = async (length = 32): Promise<string> => {
+  private _generateSecret = async (length = 32): Promise<string> => {
     let secret: string;
     const { generateKey } = await import('node:crypto');
 
@@ -113,3 +153,7 @@ export class SecretService {
     return secret;
   };
 }
+function MoreThan(arg0: number): Date | import("typeorm").FindOperator<Date> {
+  throw new Error('Function not implemented.');
+}
+
