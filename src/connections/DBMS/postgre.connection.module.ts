@@ -10,10 +10,11 @@ const path = require('path');
         type: 'postgres',
         host: process.env.POSTGRES_HOST,
         port: Number(process.env.POSTGRES_PORT),
+        database: 'postgres',
         // database: process.env.POSTGRES_DB,
         // username: process.env.POSTGRES_USER,
         // password: process.env.POSTGRES_PASS,
-        entities: [path.join(__dirname, '../entities/**/*.repository{.ts,.js}')],
+        entities: [path.join(__dirname, '../../entities/**/*.repository{.ts,.js}')],
         synchronize: true,
       }),
       inject: [ ConfigService ]

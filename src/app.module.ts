@@ -12,13 +12,14 @@ import {
   DomainModule,
   SecretModule,
   TokenModule,
-  UserModule,
+  UserModule
 } from '@entities/index';
 import { 
   AMQP_CONFIG,
   REDIS_CONFIG,
   TOKEN_CONFIG,
-  POSTGRE_CONFIG
+  POSTGRE_CONFIG,
+  SECRET_CONFIG
 } from '@config/index';
 import { CacheModule } from '@nestjs/cache-manager';
 
@@ -32,7 +33,8 @@ const path = require('path');
         AMQP_CONFIG,
         REDIS_CONFIG,
         POSTGRE_CONFIG,
-        TOKEN_CONFIG
+        TOKEN_CONFIG,
+        SECRET_CONFIG
       ],
       envFilePath: [
         path.join(__dirname, '../config/.env'),

@@ -2,46 +2,48 @@ import { HttpStatus, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Secret } from '../repository';
-import { Interval, Timeout } from '@nestjs/schedule';
-import { TEMP_ACCESS_SECRET_LIVETIME_IN_MS } from '@secret/constant/secret.const';
+import { Interval } from '@nestjs/schedule';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SecretService implements OnModuleInit {
+export class SecretService { // implements OnModuleInit {
   private readonly logger = new Logger(SecretService.name);
+  private readonly tempAccessSecretLivetimeInMs: number;
 
   constructor(
     @InjectRepository(Secret) private readonly repository: Repository<Secret>,
-    @Inject(CACHE_MANAGER) private readonly cacheStorage: Cache
-  ) {}
-
+    @Inject(CACHE_MANAGER) private readonly cacheStorage: Cache,
+    private readonly config: ConfigService
+  ) {
+    this.tempAccessSecretLivetimeInMs = this.config.get('tempAccessSecretLivetimeInMs');
+  }
 
 
   /**
    * Метод для запуска генерации временного ключа при запуске приложения.
    */
   async onModuleInit() {
-    try {
-      const tempSecret = await this.repository.findOne
-        ({ 
-          where: { expireAt: MoreThan(Date.now()) },
-          order: { id: 'DESC' } 
-        });
-      if(!tempSecret) await this.createTemporaryAccessSecret(); 
-    } catch(err) {
-      this.logger.error(err, 'Произошла ошибка при инициации временного ключа!');
-    }
+    this.logger.log('Secret service bootstrapped')
+    // try {
+    //   const tempSecret = await this.repository.findOne
+    //     ({ 
+    //       where: { expireAt: MoreThan(Date.now()) },
+    //       order: { id: 'DESC' } 
+    //     });
+    //   if(!tempSecret) await this.createTemporaryAccessSecret(); 
+    // } catch(err) {
+    //   this.logger.error(err, 'Произошла ошибка при инициации временного ключа!');
+    // }
   }
-
 
 
   /**
    * Генерирует временую часть
    *
    */
-  // @Timeout(3000)
-  // @Interval(TEMP_ACCESS_SECRET_LIVETIME_IN_MS - 5000)
+  // @Interval(this.tempAccessSecretLivetimeInMs)
   async createTemporaryAccessSecret() {
     try {
       const secretKey = await this._generateSecret();
@@ -50,13 +52,16 @@ export class SecretService implements OnModuleInit {
         expireAt: Date.now() + +process.env.SECRET_LIFETIME,
       });
       await this.repository.save(secret);
-      await this.cacheStorage.set('temp-secret:last', secret.secret, TEMP_ACCESS_SECRET_LIVETIME_IN_MS);
-      
-
+      await this.cacheStorage.set(
+        'temp-secret:last',
+        secret.secret,
+        this.tempAccessSecretLivetimeInMs
+      );
     } catch (err) {
       this.logger.error(err);
     }
   }
+
 
   /**
    * По верифицируемому запросу дает начальную часть секретного ключа.
@@ -81,6 +86,7 @@ export class SecretService implements OnModuleInit {
     return { result, status };
   }
 
+
   /**
    * Отдает крайний временый секретный ключ.
    * (Требует оптимизации)
@@ -104,6 +110,7 @@ export class SecretService implements OnModuleInit {
 
     return { result };
   }
+
 
   /**
    * Отдает два последних временных секретных ключа.

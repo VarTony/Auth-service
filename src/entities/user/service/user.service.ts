@@ -1,9 +1,10 @@
 import { Injectable, HttpStatus, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserData } from '../types';
 import { User } from '../repository';
 import { DomainService } from '@domain/service';
+import { Interval, Timeout } from '@nestjs/schedule';
 
 @Injectable()
 export class UserService {
@@ -90,7 +91,9 @@ export class UserService {
    *
    * @returns
    */
+  @Timeout(1000)
   async findAllUsers() {
+    console.log(await this.repository.find())
     // await this.repository.delete([1, 2])
     return await this.repository.find();
   }
