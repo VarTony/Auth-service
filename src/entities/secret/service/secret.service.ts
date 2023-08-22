@@ -8,7 +8,7 @@ import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SecretService { // implements OnModuleInit {
+export class SecretService implements OnModuleInit {
   private readonly logger = new Logger(SecretService.name);
   private readonly tempAccessSecretLivetimeInMs: number;
 
