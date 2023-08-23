@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
+  Query,
   Req,
   Res,
   UsePipes,
@@ -40,4 +43,22 @@ export class AuthController {
     );
     res.status(status).send({ result });
   }
+
+
+/** Аутентификация пользователя
+  *
+  * @param body
+  * @param res
+  */
+ @UsePipes(new ValidationPipe())
+ @Get('updateJWT/:rt')
+ async updateJWTPair(
+    @Param('rt') rt,
+  //  @Body() body: AuthUserDTO,
+  //  @Req() req: Request,
+   @Res() res: Response,
+ ): Promise<void> {
+
+  //  res.status(status).send({ result });
+ }
 }

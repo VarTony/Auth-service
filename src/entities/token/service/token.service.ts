@@ -11,6 +11,7 @@ import { DataFromJWTParser, JWTPair, ResultOfTokenVerification } from '@token/ty
 import { DigitImprint } from '@auth/types/service.type';
 import { SecretService } from '@secret/service/secret.service';
 import { ConfigService } from '@nestjs/config';
+import { Timeout } from '@nestjs/schedule';
 
 type CreatingTokensData = {
   userId: number;
@@ -50,7 +51,7 @@ export class TokenService {
    * @returns
    */
   async createAccessToken(
-    jti,
+    jti: number,
     data: CreatingTokensData,
   ): Promise<string | null> {
     const { userId, nativeUserId, domainName, roleId } = data;
@@ -93,7 +94,6 @@ export class TokenService {
       userAgent,
     });
     const { id } = await this.repository.save(rtJWTDbData);
-
     // Формирует токен.
     const header = { alg: 'HS512', type: 'JWT-REFRESH' };
     const payload = {
@@ -204,8 +204,9 @@ export class TokenService {
     secret: string,
   ): Promise<string> {
     const headerInBase64 = toBase64Url(header).join('');
+    console.log(headerInBase64)
     const payloadInBase64 = toBase64Url(payload).join('');
-    const signature = this.jwtSignatureCreator(headerInBase64, payloadInBase64, secret);
+    const signature = await this.jwtSignatureCreator(headerInBase64, payloadInBase64, secret);
     const jsonWebToken = [headerInBase64, payloadInBase64, signature].join('.');
 
     return jsonWebToken;

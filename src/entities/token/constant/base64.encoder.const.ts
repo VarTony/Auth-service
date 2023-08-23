@@ -15,11 +15,10 @@ const replaceSpecialSymbols = (b64string: string) =>
  * @param value
  * @returns
  */
-const toBase64 = (value) =>
-  ({
-    string: Buffer.from(value).toString('base64'),
-    object: Buffer.from(JSON.stringify(value)).toString('base64'),
-  }[typeof value]);
+const toBase64 = (value) => ({
+    string: () => Buffer.from(value).toString('base64'),
+    object: () => Buffer.from(JSON.stringify(value)).toString('base64'), // Без проброса через функцию ломается из-за неподходящего типа данных, почему??? 
+  }[(typeof value)]());
 
 /**
  * Функция обертка - Переводит строку base64 в пригодное для url значение.
@@ -27,6 +26,6 @@ const toBase64 = (value) =>
  * @param value
  * @returns
  */
-const toBase64Url = (value) => replaceSpecialSymbols(toBase64(value));
+const toBase64Url = (value: string) => replaceSpecialSymbols(toBase64(value));
 
 export { toBase64, toBase64Url };

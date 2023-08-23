@@ -1,3 +1,4 @@
-import { AuthUserDTO } from './auth.user.dto';
+import { AuthUserDTO } from './user.login.auth.dto';
+
 
 export { AuthUserDTO };
