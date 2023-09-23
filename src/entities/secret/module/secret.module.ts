@@ -4,11 +4,12 @@ import { Secret } from '../repository';
 import { SecretService } from '../service/secret.service';
 import { SecretController } from '@secret/controller/secret.controller';
 import { ConfigService } from '@nestjs/config';
-// import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { AMQPService } from 'src/core/amqp/service/amqp.service.utility';
+
 
 @Module({
   imports: [ TypeOrmModule.forFeature([Secret])],
   controllers: [ SecretController ],
-  providers: [ SecretService, ConfigService ],
+  providers: [ SecretService, ConfigService, AMQPService ],
 })
 export class SecretModule {}

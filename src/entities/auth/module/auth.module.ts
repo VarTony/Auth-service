@@ -16,4 +16,4 @@ import { Secret, SecretService } from '@secret/index';
     DomainService
   ],
 })
-export class AuthModule {}
+export class AuthModule {};

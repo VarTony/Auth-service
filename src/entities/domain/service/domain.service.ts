@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Domain } from '../repository';
-import { PasswordHandler } from 'src/utility_classes';
+import { PasswordHandler } from 'src/core';
 import { ResDomainResults } from '@domain/constant';
 
 @Injectable()

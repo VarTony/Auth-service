@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '..';
 import { Response, Request } from 'express';
-import { AuthUserDTO } from '@auth/dto';
+import { AuthUserDTO, JWRTQueryStirng } from '@entities/auth/dto';
 
 @Controller('auth')
 export class AuthController {
@@ -42,23 +42,25 @@ export class AuthController {
       { location, userAgent },
     );
     res.status(status).send({ result });
-  }
+}
 
 
-/** Аутентификация пользователя
+  /** Аутентификация пользователя
   *
   * @param body
   * @param res
   */
- @UsePipes(new ValidationPipe())
- @Get('updateJWT/:rt')
- async updateJWTPair(
-    @Param('rt') rt,
-  //  @Body() body: AuthUserDTO,
-  //  @Req() req: Request,
-   @Res() res: Response,
- ): Promise<void> {
+  @UsePipes(new ValidationPipe())
+  @Get('updateJWT/:rt')
+  async updateJWTPair(
+    @Param('rt') { rt }: JWRTQueryStirng,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+  const location = req.headers.host;
+  const userAgent = req.headers['user-agent'];
+  const { result, status } = await this.service.updateJWTPair(rt, { location, userAgent });
 
-  //  res.status(status).send({ result });
+   res.status(status).send({ result });
  }
 }

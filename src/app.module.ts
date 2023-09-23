@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MyLoggerModule } from './utility_classes';
+import { MyLoggerModule } from './core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { 
   RabbitConnection,

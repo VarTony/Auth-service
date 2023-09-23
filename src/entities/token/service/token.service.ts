@@ -8,7 +8,7 @@ import {
 import { RefreshToken } from '../repository';
 import { Repository } from 'typeorm';
 import { DataFromJWTParser, JWTPair, ResultOfTokenVerification } from '@token/types';
-import { DigitImprint } from '@auth/types/service.type';
+import { DigitImprint } from '@entities/auth/types/service.type';
 import { SecretService } from '@secret/service/secret.service';
 import { ConfigService } from '@nestjs/config';
 import { Timeout } from '@nestjs/schedule';

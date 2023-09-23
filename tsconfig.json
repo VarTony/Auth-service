@@ -26,7 +26,7 @@
       "@user/*":        ["src/entities/user/*"],
       "@connections/*" : ["src/connections/*" ],
       "@config/*" : ["src/configs/*" ],
-      "@utility_classes/*": ["src/utility_classes/*"],
+      "@utility_classes/*": ["src/core/utility_classes/*"],
       "@entities/*":     ["src/entities/*"]
 
     }

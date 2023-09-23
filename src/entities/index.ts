@@ -1,4 +1,4 @@
-import { AuthModule } from '@auth/index';
+import { AuthModule } from '@entities/auth/index';
 import { ServiceModule } from '@service/index';
 import { TokenModule } from '@token/index';
 import { DomainModule } from '@domain/index';

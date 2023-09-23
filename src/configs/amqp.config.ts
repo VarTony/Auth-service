@@ -3,6 +3,7 @@ const AMQP_CONFIG = () => ({
     amqPass: process.env.AMQP_PASSWORD,
     amqHost: process.env.AMQP_HOST,
     amqPort: process.env.AMQP_PORT,
+    amqURI: `amqp://${ process.env.AMQP_LOGIN }:${ process.env.AMQP_PASSWORD }@${ process.env.AMQP_HOST }:${ process.env.AMQP_PORT }`,
     amqDomainExchange: process.env.AMQP_EXCHANGE_DOMAIN_NAME,
     amqSecretExchange: process.env.AMQP_EXCHANGE_SECRET_NAME
   });

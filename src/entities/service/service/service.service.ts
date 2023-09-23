@@ -9,7 +9,7 @@ import {
   noAccessToDeactivate,
   serviceIsAlreadyExist,
 } from '@service/constant';
-import { PasswordHandler } from 'src/utility_classes';
+import { PasswordHandler } from 'src/core';
 
 @Injectable()
 export class ServicesService {

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { TokenService } from '@token/service';
-import { PasswordHandler } from '@utility_classes/index';
+import { PasswordHandler } from 'src/core/index';
 import { UserService } from '@user/index';
 import { DomainService } from '@domain/service';
 import { JWTPair } from '@token/types/jwt.type';
@@ -9,8 +9,8 @@ import {
   isValidationOk,
   validationRTBadResult,
   validationRTOkResult,
-} from '@auth/constant';
-import { DigitImprint } from '@auth/types/service.type';
+} from '@entities/auth/constant';
+import { DigitImprint } from '@entities/auth/types/service.type';
 
 @Injectable()
 export class AuthService {
