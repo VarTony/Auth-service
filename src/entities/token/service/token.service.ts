@@ -1,17 +1,18 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'node:crypto';
+import { toBase64Url, fromBase64Url } from '../constant';
+import { TokenRepository } from '../repository';
 import {
-  toBase64Url,
-  fromBase64Url
-} from '../constant';
-import { RefreshToken } from '../repository';
-import { Repository } from 'typeorm';
-import { DataFromJWTParser, JWTPair, ResultOfTokenVerification } from '@token/types';
+  DataFromJWTParser,
+  JWTHeader,
+  JWTPair,
+  JWTPayload,
+  ResultOfTokenVerification,
+} from '@token/types';
 import { DigitImprint } from '@entities/auth/types/service.type';
 import { SecretService } from '@secret/service/secret.service';
 import { ConfigService } from '@nestjs/config';
-import { Timeout } from '@nestjs/schedule';
+import { Timeout, Interval } from '@nestjs/schedule';
 
 type CreatingTokensData = {
   userId: number;
@@ -31,8 +32,7 @@ export class TokenService {
   private readonly primaryATSecret: string;
 
   constructor(
-    @InjectRepository(RefreshToken)
-    private readonly repository: Repository<RefreshToken>,
+    private readonly tokenRepository: TokenRepository,
     private readonly config: ConfigService,
     private readonly secret: SecretService,
   ) {
@@ -43,20 +43,19 @@ export class TokenService {
     this.primaryATSecret = this.config.get('primaryATSecret');
   }
 
-
   /**
    * Создает access токен.
    *
    * @param usersInfo
    * @returns
    */
-  async createAccessToken(
+  private async createAccessToken(
     jti: number,
     data: CreatingTokensData,
   ): Promise<string | null> {
     const { userId, nativeUserId, domainName, roleId } = data;
-    const header = { alg: 'HS512', type: 'JWT-ACCESS' };
-    const payload = {
+    const header: JWTHeader = { alg: 'HS512', type: 'JWT-ACCESS' };
+    const payload: JWTPayload = {
       uid: userId,
       nuid: nativeUserId,
       roles: roleId ?? 'roleId',
@@ -65,12 +64,12 @@ export class TokenService {
       jti,
       exp: Date.now() + this.accessTokenExpiration,
     };
-    const currentTemporarySecret = await this.secret.getCurrentTemporarySecret();
-    const secret = `${data.domainSecret}.${currentTemporarySecret}.${ this.primaryATSecret }`;
+    const currentTemporarySecret =
+      await this.secret.getCurrentTemporarySecret();
+    const secret = `${data.domainSecret}.${currentTemporarySecret}.${this.primaryATSecret}`;
 
     return await this.createJWT(header, payload, secret);
   }
-
 
   /**
    * Создает refresh токен.
@@ -79,37 +78,40 @@ export class TokenService {
    * @param userData
    * @returns
    */
-  async createRefreshToken(
+  private async createRefreshToken(
     data: CreatingTokensData,
     devicesInfo: { location: string; userAgent: string },
   ): Promise<string> {
     const { userId, nativeUserId } = data;
     const { location, userAgent } = devicesInfo;
     // Создает запись токена в базе.
-    const rtJWTDbData = await this.repository.create({
+    const { id } = this.tokenRepository.create({
       userId,
       token: 'plug',
       isActive: true,
       location,
       userAgent,
     });
-    const { id } = await this.repository.save(rtJWTDbData);
     // Формирует токен.
-    const header = { alg: 'HS512', type: 'JWT-REFRESH' };
-    const payload = {
+    const header: JWTHeader = { alg: 'HS512', type: 'JWT-REFRESH' };
+    const payload: JWTPayload = {
       jti: id,
       iat: Date.now(),
       exp: Date.now() + this.refreshTokenExpiration,
       iss: this.serviceName,
       uid: nativeUserId,
     };
-    const refreshJWT = await this.createJWT(header, payload, this.refreshTokenSecret);
+    const refreshJWT = await this.createJWT(
+      header,
+      payload,
+      this.refreshTokenSecret,
+    );
 
-    // Записывает сформированный токен в БД.
-    await this.repository.update({ id }, { token: refreshJWT });
+    // Записывает делигирует запись сформированного токена ORM.
+    await this.tokenRepository.update({ id }, { token: refreshJWT });
+
     return refreshJWT;
   }
-
 
   /**
    * Создает пару JWT токенов.
@@ -123,12 +125,12 @@ export class TokenService {
     digitImprint: DigitImprint,
   ): Promise<JWTPair> {
     const refreshToken = await this.createRefreshToken(data, digitImprint);
+
     const { jti } = (await this.jwtParser(refreshToken)).map?.payload;
     const accessToken = await this.createAccessToken(jti, data);
 
     return { refreshToken, accessToken };
   }
-
 
   /**
    * Деактивирует refresh токен.
@@ -141,7 +143,10 @@ export class TokenService {
     let result: string;
     let status: number;
     try {
-      const updated = await this.repository.update({ id }, { isActive: false });
+      const updated = await this.tokenRepository.update(
+        { id },
+        { isActive: false },
+      );
       if (!updated) {
         result = 'Не удалось деактивировать, токен не найден.';
         status = HttpStatus.NOT_FOUND;
@@ -155,7 +160,6 @@ export class TokenService {
     }
     return { result, status };
   }
-
 
   /**
    * Верефицирует refresh token.
@@ -174,7 +178,11 @@ export class TokenService {
     const { jti } = map.payload;
     const isCorrectSignature =
       signature ===
-      (await this.jwtSignatureCreator(header, payload, this.refreshTokenSecret));
+      (await this.jwtSignatureCreator(
+        header,
+        payload,
+        this.refreshTokenSecret,
+      ));
     if (!isCorrectSignature) return 'Fake_Token';
 
     const token = await this.findRTById(jti);
@@ -188,59 +196,63 @@ export class TokenService {
     return 'Ok';
   };
 
-  
   /**
    * Создает обобщенный JWT
-   * 
-   * 
-   * @param header 
-   * @param payload 
-   * @param secret 
-   * @returns 
+   *
+   *
+   * @param header
+   * @param payload
+   * @param secret
+   * @returns
    */
-  async createJWT(
-    header: any,
-    payload: any,
+  private async createJWT(
+    header: JWTHeader,
+    payload: JWTPayload,
     secret: string,
   ): Promise<string> {
     const headerInBase64 = toBase64Url(header).join('');
-    console.log(headerInBase64)
+    console.log(headerInBase64);
     const payloadInBase64 = toBase64Url(payload).join('');
-    const signature = await this.jwtSignatureCreator(headerInBase64, payloadInBase64, secret);
+    const signature = await this.jwtSignatureCreator(
+      headerInBase64,
+      payloadInBase64,
+      secret,
+    );
     const jsonWebToken = [headerInBase64, payloadInBase64, signature].join('.');
 
     return jsonWebToken;
-  };
-
+  }
 
   /**
    * Формирует JWT подпись
-   * 
-   * 
-   * @param b64Header 
-   * @param b64payload 
-   * @param secret 
-   * @param alg 
-   * @returns 
+   *
+   *
+   * @param b64Header
+   * @param b64payload
+   * @param secret
+   * @param alg
+   * @returns
    */
-  async jwtSignatureCreator (
+  async jwtSignatureCreator(
     b64Header: string,
     b64payload: string,
     secret: string,
     alg: 'sha256' | 'sha512' = 'sha512',
   ) {
-    const signature = crypto.createHmac(alg, `${b64Header}${b64payload}${secret}`);
+    const signature = crypto.createHmac(
+      alg,
+      `${b64Header}${b64payload}${secret}`,
+    );
     return signature.digest('base64url');
-  };
+  }
 
-
- /**
-  *  Разбирает токен на составные части.
-  *
-  * 
-  * @param token
-  * @returns
-  */
+  /**
+   *  Разбирает токен на составные части.
+   *
+   *
+   * @param token
+   * @returns
+   */
   async jwtParser(token: string): Promise<DataFromJWTParser> {
     const [header, payload, signature] = token.split('.');
 
@@ -251,8 +263,7 @@ export class TokenService {
         payload: JSON.parse(await fromBase64Url(payload)),
       },
     };
-  };
-
+  }
 
   /**
    * Ищет токен по его id.
@@ -262,7 +273,34 @@ export class TokenService {
    * @returns
    */
   findRTById = async (id: number) =>
-    await this.repository.findOne({ where: { id } });
+    this.tokenRepository.findOne({ where: { id } });
 
-  // async refreshTokensCleaner() {}
+  /**
+   * Удаляет деактивированные refresh токены
+   */
+  async refreshTokensCleaner() {
+    await this.tokenRepository.deleteInactiveTokens();
+
+    this.logger.log('Деактивированные refresh токены были удалены');
+  }
+
+  
+  // ---------------- Методы срабатывающие по крону
+
+
+  /**
+   * Запустится один раз через 5 секунд после старта приложения
+   */
+  @Timeout(5000)
+  async handleCleanerOnStart() {
+    await this.refreshTokensCleaner();
+  }
+
+  /**
+   * Будет срабатывать каждый час
+   */
+  @Interval(+process.env.REFRESH_CLEANER_INTERVAL || 3_600_000)
+  async handleCleanerInterval() {
+    await this.refreshTokensCleaner();
+  }
 }

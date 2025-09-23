@@ -1,3 +1,4 @@
-import { RefreshToken } from './refresh.token.repository';
+import { RefreshToken } from './refresh.token.model';
+import { TokenRepository } from './token.repository';
 
-export { RefreshToken };
+export { RefreshToken, TokenRepository };

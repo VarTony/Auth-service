@@ -17,9 +17,9 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   
   constructor(
-    private readonly user: UserService,
-    private readonly token: TokenService,
-    private readonly domain: DomainService,
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+    private readonly domainService: DomainService,
   ) {}
 
   /**
@@ -38,14 +38,14 @@ export class AuthService {
     let result: JWTPair | string;
     let status: number;
     try {
-      const domain = await this.domain.findDomainByName(domainName);
+      const domain = await this.domainService.findDomainByName(domainName);
       if (!domain) {
         result = `Домен с именем ${domainName} не был найден;`;
         status = HttpStatus.NOT_FOUND;
         return { result, status };
       }
 
-      const user = await this.user.getUserByDomainData(login, domain.id);
+      const user = await this.userService.getUserByDomainData(login, domain.id);
       const { salt, passhash } = user;
       const isCorrectPass = await PasswordHandler.passChecker({
         password,
@@ -59,7 +59,7 @@ export class AuthService {
         return { result, status };
       }
       const { id, roleId, nativeUserId } = user;
-      result = await this.token.createJWTPair(
+      result = await this.tokenService.createJWTPair(
         {
           userId: id,
           domainName,
@@ -93,21 +93,22 @@ export class AuthService {
     let result: JWTPair | string;
     let status: number;
     try {
-      const resultOfVerification = await this.token.verificateRT(
+      const resultOfVerification = await this.tokenService.verificateRT(
         rt,
         digitImprint,
       );
       if (!isValidationOk(resultOfVerification))
         return validationRTBadResult[resultOfVerification];
 
-      const { uid } = (await this.token.jwtParser(rt)).map.payload;
+      const { uid, jti: oldRefreshID } = (await this.tokenService.jwtParser(rt)).map.payload;
       validationRTOkResult[resultOfVerification](uid); // Логгирует выдачу нового токена
-      const { roleId, domainId, nativeUserId } = await this.user.findUserById(
+      const { roleId, domainId, nativeUserId } = await this.userService.findUserById(
         uid
       );
-      const domain = await this.domain.findDomainById(domainId);
+      const domain = await this.domainService.findDomainById(domainId);
+      if (!domain) return { result: 'Домен не найден', status: 404 };
 
-      result = await this.token.createJWTPair(
+      result = await this.tokenService.createJWTPair(
         {
           userId: uid,
           domainName: domain.name,
@@ -117,6 +118,7 @@ export class AuthService {
         },
         digitImprint,
       );
+      await this.tokenService.deactivateRefreshJWT(oldRefreshID);
 
       status = HttpStatus.OK;
     } catch (err) {

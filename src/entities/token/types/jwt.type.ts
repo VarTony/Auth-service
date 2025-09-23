@@ -1,13 +1,16 @@
 type JWTHeader = {
   alg: string;
-  typ: string;
+  type: string;
 };
 
 type JWTPayload = {
   uid: number;
+  nuid?: number;
+  roles?: number | 'roleId';
+  dmn?: string;
   jti: number;
-  iat: Date;
-  exp: Date;
+  iat?: Date | number;
+  exp: Date | number;
   iss: string;
 };
 
