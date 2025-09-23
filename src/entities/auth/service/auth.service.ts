@@ -100,10 +100,10 @@ export class AuthService {
       if (!isValidationOk(resultOfVerification))
         return validationRTBadResult[resultOfVerification];
 
-      validationRTOkResult[resultOfVerification]();
       const { uid } = (await this.token.jwtParser(rt)).map.payload;
+      validationRTOkResult[resultOfVerification](uid); // Логгирует выдачу нового токена
       const { roleId, domainId, nativeUserId } = await this.user.findUserById(
-        uid,
+        uid
       );
       const domain = await this.domain.findDomainById(domainId);
 

@@ -1,12 +1,11 @@
-import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { RabbitMQAdapter } from '../addapters';
-import { RabbitConnection } from '@connections/index';
+import { Global, Module } from '@nestjs/common';
+import { AMQPService } from '../service/amqp.service.utility';
+import { RabbitConnection } from '@connections/AMQP/rabbit.connection.module';
 
+@Global()
 @Module({
-  
-
-  providers: [ ConfigService, RabbitMQAdapter ],
-  exports: []
+  imports: [RabbitConnection],
+  providers: [AMQPService],
+  exports: [AMQPService],
 })
 export class AMQPModule {}

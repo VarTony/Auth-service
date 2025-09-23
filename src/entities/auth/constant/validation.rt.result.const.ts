@@ -19,11 +19,11 @@ const validationRTBadResult = {
 
 // Обработчик в случае нормального результата проверки токена.
 const validationRTOkResult = {
-  Ok: async (email: string) =>
-    console.log(`User with email: ${email} give new tokens`),
-  Atypical_Device_Data: async (email: string) => {
+  Ok: async (uid: number) =>
+    console.log(`User with uid: ${uid} given new tokens`),
+  Atypical_Device_Data: async (uid: number) => {
     console.warn(
-      `User with email: ${email} was request from new location and user agent.`,
+      `User with uid: ${uid} was request from new location and user agent.`,
     );
     // Mailer connect;
   },

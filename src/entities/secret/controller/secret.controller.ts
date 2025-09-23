@@ -19,7 +19,7 @@ export class SecretController {
         try {
             const secret = '1 8 15 16 23 42'; //await this.service.getCurrentTemporarySecret() ??
             const channel = await this.amqpService.connectSecretExchange();
-            await this.amqpService.publishSecret(channel, secret);
+            await this.amqpService.publishSecret(secret);
             this.logger.log(`Temp secret success broadcasted. \n Time: ${new Date()}`);
         } catch (err) {
             console.error(err);

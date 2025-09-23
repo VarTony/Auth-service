@@ -9,7 +9,7 @@ export class PasswordHandler {
    * @returns
    */
   static passChecker = async (passData: PassData): Promise<boolean> => {
-    const passhash = await crypto
+    const passhash = crypto
       .createHash('sha512')
       .update(`${passData.password}.${passData.salt}`)
       .digest('hex');
@@ -26,12 +26,12 @@ export class PasswordHandler {
   static createPasshashAndSalt = async (
     password: string,
   ): Promise<PassPack> => {
-    const salt = await crypto
+    const salt = crypto
       .createHash('sha256')
       .update(Date.now().toString() + Math.random().toString())
       .digest('hex');
 
-    const passhash = await crypto
+    const passhash = crypto
       .createHash('sha512')
       .update(`${password}.${salt}`)
       .digest('hex');

@@ -1,46 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AMQP_CONFIG } from '@config/amqp.config';
-import { RabbitMQAdapter } from '../addapters';
-import { Channel } from 'amqp-connection-manager';
-
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class AMQPService {
-    private readonly CONFIG = AMQP_CONFIG();
+  constructor(
+    private readonly config: ConfigService,
+    private readonly amqp: AmqpConnection,
+  ) {}
 
-    constructor(
-        private readonly config: ConfigService,
-        private readonly amqpAddapter: RabbitMQAdapter
-    ) {
-        this.amqpAddapter.connect();
-        // this.connection = amqplib.connect(this.config.get('amqURI'), (err, connect) => {});
+  /**
+   * Регистрируем exchange/queue, если хотим вручную управлять топологией.
+   * Через addSetup гарантируем, что биндинги восстановятся при reconnect.
+   */
+  async connectSecretExchange(): Promise<void> {
+    await this.amqp.managedChannel.addSetup(async (channel) => {
+      const exchange = this.config.get('amqSecretExchange');
+      const queue = 'secret-broadcasting';
+
+      await channel.assertExchange(exchange, 'fanout', { durable: true });
+      await channel.assertQueue(queue, { durable: true });
+      await channel.bindQueue(queue, exchange, '');
+    });
+  }
+
+  /**
+   * Публикация сообщения в обменник secret.
+   * 
+   * @param secret
+   */
+  async publishSecret(secret: string): Promise<void> {
+    try {
+      await this.amqp.publish(
+        this.config.get('amqSecretExchange'),
+        '', // routingKey пустой, т.к. fanout
+        secret,
+      );
+      console.info('Secret published:', secret);
+    } catch (err) {
+      console.error('Error publishing secret:', err);
+      throw err;
     }
-
-    async connectSecretExchange(): Promise<Channel> {
-        // await this.amqpAddapter.connect();
-        const channel = await this.amqpAddapter.createChannel();
-        this.amqpAddapter.declareExchange(channel, this.CONFIG.amqSecretExchange, 'fanout');
-        this.amqpAddapter.bindQueuesToExchange(
-            channel,
-            ['secret-broadcasting'],
-            this.CONFIG.amqSecretExchange
-        );
-        return channel;
-    }
-
-
-    async publishSecret(channel: Channel, secret: string): Promise<void> {
-        try {
-        await this.amqpAddapter.publishToExchange(
-            channel,
-            this.CONFIG.amqSecretExchange,
-            secret
-        );
-        console.info('The secret was published');
-        } catch (err) {
-            console.error('');
-            throw err;
-        }
-    }
+  }
 }

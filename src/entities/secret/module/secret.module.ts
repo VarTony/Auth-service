@@ -3,13 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Secret } from '../repository'; 
 import { SecretService } from '../service/secret.service';
 import { SecretController } from '@secret/controller/secret.controller';
-import { ConfigService } from '@nestjs/config';
-import { AMQPService } from 'src/core/amqp/service/amqp.service.utility';
+import { AMQPModule } from 'src/core/amqp/module/amqp.module.utility';
 
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([Secret])],
+  imports: [ TypeOrmModule.forFeature([Secret]), AMQPModule],
   controllers: [ SecretController ],
-  providers: [ SecretService, ConfigService, AMQPService ],
+  providers: [ SecretService ],
 })
 export class SecretModule {}
