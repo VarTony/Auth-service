@@ -49,7 +49,7 @@ $ npm ci
 ```
 
 ```bash
-$ docker-compose up -d
+$ docker compose --env-file ./config/.env up -d
 ```
 
 ## Running the app

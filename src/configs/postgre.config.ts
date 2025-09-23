@@ -7,7 +7,7 @@ const POSTGRE_CONFIG = () => ({
     database: process.env.POSTGRES_DB,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASS,
-    entities: [path.join(__dirname, '../entities/**/*.repository{.ts,.js}')],
+    entities: [path.join(__dirname, '../entities/**/*.model{.ts,.js}')],
     synchronize: true,
 })
 

@@ -15,6 +15,6 @@ async function bootstrap() {
     }),
   );
   app.useLogger(app.get(MyLoggerService));
-  await app.listen(process.env.SERVER_PORT || 3000);
+  await app.listen(+process.env.SERVER_PORT || 3353);
 }
 bootstrap();

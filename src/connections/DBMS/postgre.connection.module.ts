@@ -1,23 +1,35 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-const path = require('path');
+import * as path from 'path';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        console.info('===config.get===', 
+          config.get<string>('POSTGRES_USER'),
+          config.get<string>('POSTGRES_HOST'),
+          config.get<number>('POSTGRES_PORT'),
+          config.get<string>('POSTGRES_PASS'),
+          config.get<string>('POSTGRES_DB'),
+          { config }
+        );
+        
+        return ({
         type: 'postgres',
-        host: process.env.POSTGRES_HOST,
-        port: Number(process.env.POSTGRES_PORT),
-        database: 'postgres',
-        // database: process.env.POSTGRES_DB,
-        // username: process.env.POSTGRES_USER,
-        // password: process.env.POSTGRES_PASS,
-        entities: [path.join(__dirname, '../../entities/**/*.repository{.ts,.js}')],
+        host: config.get<string>('POSTGRES_HOST'),
+        port: config.get<number>('POSTGRES_PORT'),
+        username: config.get<string>('POSTGRES_USER'),
+        password: config.get<string>('POSTGRES_PASS'),
+        database: config.get<string>('POSTGRES_DB'),
+        entities: [
+          path.join(__dirname, '../../entities/**/*.model{.ts,.js}'),
+        ],
         synchronize: true,
-      }),
-      inject: [ ConfigService ]
+      })
+    }
     }),
   ],
 })

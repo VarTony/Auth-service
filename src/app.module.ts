@@ -37,7 +37,7 @@ const path = require('path');
         SECRET_CONFIG
       ],
       envFilePath: [
-        path.join(__dirname, '../config/.env'),
+        path.join(process.cwd(), 'config/.env'),
         path.join(__dirname, '../config/example.env'),
       ],
       isGlobal: true,

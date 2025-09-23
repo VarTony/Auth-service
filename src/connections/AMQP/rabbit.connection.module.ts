@@ -17,7 +17,7 @@ import { Secret } from '@secret/repository';
 
         const exchanges = [ 
           { name: domainExchange, type: 'topic' },
-          { name: secretExchange, type: 'topic' }
+          { name: secretExchange, type: 'fanout' }
         ];
         const uri = `amqp://${ login }:${ pass }@${ host }`;
         const connectionInitOptions = { wait: false };

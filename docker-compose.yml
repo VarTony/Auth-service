@@ -1,45 +1,37 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    volumes:
-      - .:/app
-    working_dir: /app
-    command: sh -c "yarn install && yarn dev"
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-      - redis
-      - rabbitmq
-    environment:
-      DATABASE_URL: postgres://user:password@db:5432/mydb
-      REDIS_HOST: redis
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-
   db:
     image: postgres:15
+    container_name: postgres-db
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   redis:
     image: redis:7
+    container_name: redis-cache
     restart: always
     ports:
       - "6379:6379"
 
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq-broker
     restart: always
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${AMQP_LOGIN}
+      RABBITMQ_DEFAULT_PASS: ${AMQP_PASSWORD}
     ports:
-      - "5672:5672"  # Для AMQP
-      - "15672:15672"  # Web-интерфейс RabbitMQ
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Web UI
+
+volumes:
+  pgdata:
+

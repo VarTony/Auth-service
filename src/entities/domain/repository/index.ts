@@ -1,3 +1,3 @@
-import { Domain } from './domain.repositoty';
+import { Domain } from './domain.model';
 
 export { Domain };
