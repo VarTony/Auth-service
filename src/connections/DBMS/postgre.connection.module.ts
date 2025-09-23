@@ -7,17 +7,7 @@ import * as path from 'path';
   imports: [
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        console.info('===config.get===', 
-          config.get<string>('POSTGRES_USER'),
-          config.get<string>('POSTGRES_HOST'),
-          config.get<number>('POSTGRES_PORT'),
-          config.get<string>('POSTGRES_PASS'),
-          config.get<string>('POSTGRES_DB'),
-          { config }
-        );
-        
-        return ({
+      useFactory: (config: ConfigService) =>  ({
         type: 'postgres',
         host: config.get<string>('POSTGRES_HOST'),
         port: config.get<number>('POSTGRES_PORT'),
@@ -29,7 +19,6 @@ import * as path from 'path';
         ],
         synchronize: true,
       })
-    }
     }),
   ],
 })

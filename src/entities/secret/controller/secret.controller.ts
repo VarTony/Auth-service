@@ -3,6 +3,8 @@ import { SecretService } from '../service/secret.service';
 import { Interval } from '@nestjs/schedule';
 import { AMQPService } from 'src/core/amqp/service/amqp.service.utility';
 
+const secretBroadcastInterval = +process.env.SECRET_BROADCAST_INTERVAL_MS || 720_000;
+
 
 @Controller('secret')
 export class SecretController {
@@ -14,10 +16,10 @@ export class SecretController {
     ) {}
 
 
-    @Interval(5000)
+    @Interval(secretBroadcastInterval)
     async temporarySecretBroadcastRpc() {
         try {
-            const secret = '1 8 15 16 23 42'; //await this.service.getCurrentTemporarySecret() ??
+            const secret = await this.service.getCurrentTemporarySecret() ?? '1 8 15 16 23 42';
             const channel = await this.amqpService.connectSecretExchange();
             await this.amqpService.publishSecret(secret);
             this.logger.log(`Temp secret success broadcasted. \n Time: ${new Date()}`);
