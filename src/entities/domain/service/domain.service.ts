@@ -47,6 +47,49 @@ export class DomainService {
     return answer;
   }
 
+
+  /**
+   * Обновляет данные существующего домена.
+   *
+   * @param name - имя домена (уникальный ключ)
+   * @param updateData - поля для обновления (host, password, secret)
+   * @returns
+   */
+  async updateDomain(
+    name: string,
+    updateData: Partial<{ host: string; password: string; secret: string }>
+  ): Promise<{ result: string; status: number }> {
+    let answer: { result: string; status: number };
+
+    try {
+      const domain = await this.findDomainByName(name);
+      if (!domain) return ResDomainResults.bad.domainNotFound;
+
+      // При смене пароля → пересоздаёт passhash и salt
+      if (updateData.password) {
+        const { passhash, salt } = await PasswordHandler.createPasshashAndSalt(
+          updateData.password,
+        );
+        domain.passhash = passhash;
+        domain.salt = salt;
+        delete updateData.password;
+      }
+
+      // Обновление остальных полей
+      if (updateData.host) domain.host = updateData.host;
+      if (updateData.secret) domain.secret = updateData.secret;
+
+      await this.repository.save(domain);
+      answer = ResDomainResults.good.domainSuccessUpdated;
+    } catch (err) {
+      this.logger.error(err);
+      answer = ResDomainResults.bad.errorDuringUpdating;
+    }
+
+    return answer;
+  }
+
+
   /**
    * Деактивирует домен по его имени.
    *
@@ -70,6 +113,7 @@ export class DomainService {
     return answer;
   }
 
+
   /**
    * Находит запись о домене по id.
    *
@@ -80,6 +124,7 @@ export class DomainService {
   findDomainById = async (id: number) =>
     await this.repository.findOne({ where: { id }, cache: true });
 
+  
   /**
    * Находит запись о домене по имени.
    *
@@ -89,4 +134,24 @@ export class DomainService {
    */
   findDomainByName = async (name: string) =>
     await this.repository.findOne({ where: { name }, cache: true });
+
+
+  /**
+   * Проверяет домен на существование и пришедший пароль
+   * 
+   * 
+   * @param name 
+   * @param password 
+   * @returns 
+   */
+  async isPasswordValid(name: string, password: string):Promise<boolean> {
+    const domain = await this.findDomainByName(name);
+    if (!domain) return false;
+    
+    return PasswordHandler.passChecker({
+      password,
+      passhash: domain.passhash,
+      salt: domain.salt
+    });
+  }
 }

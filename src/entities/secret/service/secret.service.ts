@@ -11,12 +11,14 @@ import { Secret } from '../repository';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { DomainService } from '@domain/service';
 import { promisify } from 'util';
 
 @Injectable()
 export class SecretService implements OnModuleInit {
   private readonly logger = new Logger(SecretService.name);
   private readonly tempAccessSecretLivetimeInMs: number;
+  private readonly domainService: DomainService;
 
   constructor(
     @InjectRepository(Secret) private readonly repository: Repository<Secret>,
@@ -34,7 +36,7 @@ export class SecretService implements OnModuleInit {
   async onModuleInit() {
     this.logger.log('Secret service bootstrapped');
     try {
-      const now = new Date(); // поправить
+      const now = new Date();
       const tempSecret = await this.repository.findOne({
         where: { expireAt: MoreThan(now) },
         order: { id: 'DESC' },
@@ -94,7 +96,14 @@ export class SecretService implements OnModuleInit {
     let result: string;
     let status: number;
     try {
-      // check domain
+      const isDomainValid = await this.domainService.isPasswordValid(domainName, password);
+      if(!isDomainValid) {
+        result = 'Неверное имя домена или пароль';
+        status = HttpStatus.FORBIDDEN;
+
+        return { result, status }
+      }
+
       result = process.env.ACCESS_TOKEN_SECRET;
       status = HttpStatus.OK;
     } catch (err) {
@@ -109,7 +118,6 @@ export class SecretService implements OnModuleInit {
   /**
    * Отдает крайний временый секретный ключ.
    * (Требует оптимизации)
-   *
    *
    * @returns
    */

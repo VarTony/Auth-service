@@ -6,6 +6,10 @@ const ResDomainResults = {
       result: 'Домен был успешно зарегистрирован.',
       status: HttpStatus.OK,
     },
+    domainSuccessUpdated: {
+      result: 'Данные домена успешно обновлены.',
+      status: HttpStatus.OK,
+    },
     domainSuccessDeactivated: (name: string) => ({
       result: `Домен ${name}, успешно деактивирован.`,
       status: HttpStatus.OK,
@@ -16,13 +20,22 @@ const ResDomainResults = {
       result: 'Домен с таким именем уже существует.',
       status: HttpStatus.CONFLICT,
     },
+    domainNotFound: {
+      result: 'Домен с таким именем не найден.',
+      status: HttpStatus.NOT_FOUND,
+    },
     errorDuringRegistration: {
       result:
         'Произошла ошибка при регистрации домена, попробуйте позже или обратитесь к администратору.',
       status: HttpStatus.INTERNAL_SERVER_ERROR,
     },
+    errorDuringUpdating: {
+      result:
+        'Произошла ошибка при обновлении данных домена, попробуйте позже или обратитесь к администратору.',
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+    },
     errorDuringDeactivation: (name: string) => ({
-      result: `Не удалось деактивировать домен ${name}`,
+      result: `Не удалось деактивировать домен ${name}.`,
       status: HttpStatus.INTERNAL_SERVER_ERROR,
     }),
   },

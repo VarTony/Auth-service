@@ -3,7 +3,7 @@ import { SecretService } from '../service/secret.service';
 import { Interval } from '@nestjs/schedule';
 import { AMQPService } from 'src/core/amqp/service/amqp.service.utility';
 
-const secretBroadcastInterval = +process.env.SECRET_BROADCAST_INTERVAL_MS || 720_000;
+const secretBroadcastInterval = +process.env.SECRET_BROADCAST_INTERVAL_MS || 720_00;
 
 
 @Controller('secret')

@@ -24,8 +24,9 @@ export class PasswordHandler {
    * @returns Password`s hash and salt
    */
   static createPasshashAndSalt = async (
-    password: string,
+    password: string
   ): Promise<PassPack> => {
+    
     const salt = crypto
       .createHash('sha256')
       .update(Date.now().toString() + Math.random().toString())
