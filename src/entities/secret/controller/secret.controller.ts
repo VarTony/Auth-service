@@ -1,7 +1,7 @@
 import { Controller, Logger } from '@nestjs/common';
 import { SecretService } from '../service/secret.service';
 import { Interval } from '@nestjs/schedule';
-import { AMQPService } from 'src/core/amqp/service/amqp.service.utility';
+import { AmqpService } from 'src/core/amqp/services';
 
 const secretBroadcastInterval = +process.env.SECRET_BROADCAST_INTERVAL_MS || 720_00;
 
@@ -11,7 +11,7 @@ export class SecretController {
     private readonly logger = new Logger(SecretController.name);
 
     constructor(
-        private readonly amqpService: AMQPService,
+        private readonly amqpService: AmqpService,
         private readonly service: SecretService
     ) {}
 

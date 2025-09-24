@@ -2,10 +2,11 @@ import { HttpStatus } from '@nestjs/common';
 
 const ResDomainResults = {
   good: {
-    domainSuccessAdded: {
+    domainSuccessAdded: (secondPartOfSecret: string) => ({
       result: 'Домен был успешно зарегистрирован.',
       status: HttpStatus.OK,
-    },
+      secondPartOfSecret
+    }),
     domainSuccessUpdated: {
       result: 'Данные домена успешно обновлены.',
       status: HttpStatus.OK,

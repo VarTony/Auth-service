@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { IMessageBroker } from '../../interfaces/message-broker.interface';
 
 @Injectable()
-export class AMQPService {
+export class RabbitMqAdapter implements IMessageBroker {
   constructor(
     private readonly config: ConfigService,
     private readonly amqp: AmqpConnection,

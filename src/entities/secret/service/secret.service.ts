@@ -56,7 +56,7 @@ export class SecretService implements OnModuleInit {
    *
    */
   private async createTemporaryAccessSecret() {
-    const secretKey = await this._generateSecret();
+    const secretKey = await this.generateSecret();
     const expireAt = new Date(
       Date.now() + (+process.env.TEMP_ACCESS_SECRET_LIVETIME_IN_MS),
     );
@@ -184,7 +184,7 @@ export class SecretService implements OnModuleInit {
    * @param length
    * @returns
    */
-  private _generateSecret = async (length = 32): Promise<string> => {
+  generateSecret = async (length = 32): Promise<string> => {
     const { generateKey } = await import('node:crypto');
     const generateKeyAsync = promisify(generateKey);
 

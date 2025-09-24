@@ -2,8 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Domain } from '../repository';
+import { SecretService } from '@secret/service/secret.service';
 import { PasswordHandler } from 'src/core';
-import { ResDomainResults } from '@domain/constant';
+import { ResDomainResults } from '@domain/constants';
+import { DomainType } from '@domain/types';
+import { CreateDomainDto } from '@domain/types/DTO';
 
 @Injectable()
 export class DomainService {
@@ -11,26 +14,33 @@ export class DomainService {
 
   constructor(
     @InjectRepository(Domain) private readonly repository: Repository<Domain>,
+    private readonly secretService: SecretService,
   ) {}
 
+
+  
+  
   /**
    * Регистрирует новый домен для дальнейшей работы.
    *
    * @param domainsData
    * @returns
    */
-  async addNewDomain(domainsData): Promise<{ result: string; status: number }> {
-    let answer: { result: string; status: number };
+  async addNewDomain(domainsData: CreateDomainDto): Promise<{ result: string; status: number, partOfSecret?: string }> {
+    let answer: { result: string; status: number, partOfSecret?: string };
 
-    const { password, host, name, secret } = domainsData;
+    const { password, host, name, firstPartOfsecret } = domainsData;
     try {
       const isDomainExist = await this.findDomainByName(name);
       if (isDomainExist) return ResDomainResults.bad.domainAlreadyExists;
 
-      const { passhash, salt } = await PasswordHandler.createPasshashAndSalt(
+      const { passhash, salt } = PasswordHandler.createPasshashAndSalt(
         password,
       );
-      const domain = await this.repository.create({
+      const secondPartOfSecret = await this.secretService.generateSecret();
+      const secret = PasswordHandler.createHash(firstPartOfsecret + secondPartOfSecret);
+
+      const domain = this.repository.create({
         name,
         passhash,
         salt,
@@ -39,7 +49,7 @@ export class DomainService {
         isActive: true,
       });
       await this.repository.save(domain);
-      answer = ResDomainResults.good.domainSuccessAdded;
+      answer = ResDomainResults.good.domainSuccessAdded(secondPartOfSecret);
     } catch (err) {
       this.logger.error(err);
       answer = ResDomainResults.bad.errorDuringRegistration;

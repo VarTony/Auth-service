@@ -1,6 +1,7 @@
 import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
 import { SecretService } from "@secret/service";
+import { plainToInstance } from 'class-transformer';
 
 
 @Injectable()
