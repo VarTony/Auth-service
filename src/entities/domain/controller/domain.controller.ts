@@ -8,6 +8,14 @@ export class DomainController {
 
   constructor(private readonly service: DomainService) {}
 
+
+  /**
+   * Регистрация нового домена по HTTP
+   * 
+   * 
+   * @param body 
+   * @returns 
+   */
   @Post()
   async registeryNewDomain(@Body() body: CreateDomainDto) {
     try {
@@ -16,7 +24,7 @@ export class DomainController {
       if (result.status === 200) this.logger.log(`${JSON.stringify(result)}`);
       else this.logger.warn(`${JSON.stringify(result)}`);
 
-      return result; // вернуть клиенту результат работы сервиса
+      return result;
     } catch (err) {
       this.logger.error('Error in registeryNewDomain', err);
       return { result: 'error', status: 500 };

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Domain } from '../repository';
 import { SecretService } from '@secret/service/secret.service';
-import { PasswordHandler } from 'src/core';
+import { PasswordHandler } from 'src/utils';
 import { ResDomainResults } from '@domain/constants';
 import { DomainType } from '@domain/types';
 import { CreateDomainDto } from '@domain/types/DTO';
@@ -16,8 +16,6 @@ export class DomainService {
     @InjectRepository(Domain) private readonly repository: Repository<Domain>,
     private readonly secretService: SecretService,
   ) {}
-
-
   
   
   /**
