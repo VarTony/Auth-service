@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { TokenService } from '@token/service';
-import { PasswordHandler } from 'src/core/index';
+import { PasswordHandler } from 'src/utils';
 import { UserService } from '@user/index';
 import { DomainService } from '@domain/service';
 import { JWTPair } from '@token/types/jwt.type';
